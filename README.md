@@ -1,6 +1,3 @@
-Here’s a more **concise, professional** version of the README file for GitHub:
-
----
 
 # Student and Teacher Portal
 
@@ -87,18 +84,3 @@ ng serve
 
 ---
 
-## Contributing
-
-Feel free to fork the repository and submit pull requests. For issues or feature requests, please open an issue on GitHub.
-
----
-
-## License
-
-MIT License
-
----
-
-This version is more concise and to the point while still covering all essential information for your project. You can now easily add it to your GitHub repository.
-
-Let me know if you need further edits!
