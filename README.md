@@ -53,7 +53,7 @@ npm install
 Create a `.env` file for environment variables (`MONGO_URI`, `JWT_SECRET`), then start the backend server:
 
 ```bash
-npm start
+node server.js
 ```
 
 ### 3. Frontend Setup
