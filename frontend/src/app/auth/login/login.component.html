@@ -1,0 +1,46 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header class="login-header">
+      <mat-card-title class="login-title">Login</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content class="login-content">
+      <form [formGroup]="loginForm"  class="login-form">
+        
+        <label class="input-label">Email</label>
+        <mat-form-field class="full-width login-input" appearance="outline">   
+          <input matInput formControlName="email" type="email" class="email-input" placeholder="Enter your email" required>
+          <mat-icon matSuffix class="email-icon">email</mat-icon>
+          <mat-error class="email-error" *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched">
+            Please enter a valid email.
+          </mat-error>
+        </mat-form-field>
+      
+        <label class="input-label">Password</label>
+        <mat-form-field class="full-width login-input" appearance="outline">
+          <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" class="password-input" placeholder="Enter your password" required>
+          <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" class="password-toggle">
+            <mat-icon class="password-icon">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error class="password-error" *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched">
+            Password is required.
+          </mat-error>
+        </mat-form-field>
+    
+        <button mat-raised-button color="primary" class="login-btn" (click)="onSubmit()" [disabled]="!loginForm.valid">
+          Login
+        </button>
+    
+        <div class="forgot-password">
+          <a routerLink="/forgot-password" class="forgot-password-text">Forgot Password</a>
+        </div>
+        
+        <div class="forgot-password">
+          <a routerLink="/register" class="forgot-password-text">Don't have any account. </a>
+        </div>
+    
+      </form>
+    </mat-card-content>
+    
+  </mat-card>
+</div>

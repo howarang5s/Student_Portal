@@ -1,0 +1,86 @@
+.teacher-profile-container {
+    text-align: center;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    position: relative;
+  }
+
+  .buttons-container {
+    display: flex;
+    gap: 2px; /* Space between Add Data and Logout buttons */
+  }
+  
+  .loading {
+    font-size: 18px;
+    color: #3b8d99;
+    font-weight: bold;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .profile-header h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .edit-button {
+    background-color: #059919;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .edit-button:hover {
+    background-color: #016d0a;
+  }
+  .logout-button:hover {
+    background-color: #cc0000;
+  }
+  
+  .profile-card {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #3b8d99, #6b8e23);
+    color: white;
+    text-align: left;
+  }
+  
+  .profile-body p {
+    font-size: 14px;
+    margin: 5px 0;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+  }
+  

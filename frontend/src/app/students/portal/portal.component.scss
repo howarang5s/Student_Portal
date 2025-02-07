@@ -1,0 +1,275 @@
+// Styles for the mat-card component
+.portal-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+.portal-subtitle-and-add-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+}
+
+/* Wrapping buttons inside a flex container */
+.buttons-container {
+  display: flex;
+  gap: 2px; /* Space between Add Data and Logout buttons */
+}
+
+/* Button Styling */
+.add-data-btn {
+  background-color: #3b8d99;
+  color: white;
+  font-weight: bold;
+}
+
+.logout-btn {
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+}
+
+
+.grade-box {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  min-width: 50px;
+}
+
+/* Conditional Colors */
+.f-grade {
+  background-color:rgba(255, 104, 151, 0.5); /* Light pink for failing grades */
+  color:rgba(255, 181, 157, 1);
+}
+
+.b-grade {
+  background-color: rgba(255, 247, 245, 1); /* Light pink for passing grades */
+  color:rgba(255, 181, 157, 1);
+}
+
+.a-grade {
+  background-color: rgba(104, 101, 99, 1); /* Light pink for passing grades */
+  color: rgba(192, 192, 192, 1);
+}
+
+
+
+.portal-card {
+  width: 100%;
+  max-width: 1200px;
+  background-color: #ffffff;
+  // box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  // border-radius: 8px;
+  padding: 20px;
+
+  // Title and Subtitle Styling
+  .portal-header {
+    margin-bottom: 15px;
+  }
+
+  .portal-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .portal-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  // Button Styling
+  button {
+    margin-left: auto;
+    background-color: White;
+    color: black;
+    font-weight: 500;
+    padding: 10px 20px;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+
+    // border-radius: 4px;
+    // transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+      background-color: White;
+    }
+  }
+
+
+  // Hoverable Boxes for Stats
+  .hoverable-boxes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 175px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+      .hover-box-below {
+        background-color: #ff05f2;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+          transform: scale(1.05);
+          // box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        mat-card-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #fdfbfb;
+        }
+      }
+
+      .hover-box-top {
+        background-color: #28df98;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+        &:hover {
+          transform: scale(1.05);
+          // box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+      mat-card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fdfbfb;
+      }
+    }
+  }
+
+  .top {
+    font-size: 18px;
+        font-weight: 600;
+        color: #fdfbfb;
+    }
+
+  .below {
+    font-size: 18px;
+        font-weight: 600;
+        color: #fdfbfb; 
+  }
+
+  .date-cell {
+    white-space: pre-line; /* Allow line breaks */
+    text-align: center;    /* Align text in center (optional) */
+  }
+
+  // Table Container Styling
+  table {
+    width: 100%;
+    margin-top: 20px;
+    // border-spacing: 0;
+    // border-collapse: collapse;
+    background-color: #fafafa;
+
+    th, td {
+      padding: 16px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      color:rgba(52, 55, 68, 1);
+      // border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: white;
+      color: rgba(52, 55, 68, 1);
+      font-weight: 600;
+    }
+
+    td {
+      background-color: #fff;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+  }
+
+  // Responsive Design for smaller screens
+  @media (max-width: 768px) {
+    .portal-card {
+      padding: 15px;
+    }
+
+    .portal-title {
+      font-size: 20px;
+    }
+
+    .portal-subtitle {
+      font-size: 14px;
+    }
+
+    table {
+      font-size: 12px;
+      th, td {
+        padding: 10px;
+      }
+    }
+
+    .hoverable-boxes {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-container {
+    padding: 8px
+  }
+
+  .portal-card {
+    padding: 15px;
+  }
+
+  .portal-title {
+    font-size: 18px;
+  }
+
+  .portal-subtitle {
+    font-size: 10px;
+  }
+
+  table {
+    font-size: 10px;
+    th, td {
+      padding: 7px;
+    }
+  }
+
+  .hoverable-boxes {
+    grid-template-columns: 1fr;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+
