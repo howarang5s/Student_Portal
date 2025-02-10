@@ -17,6 +17,16 @@ export class AuthService {
   saveToken(token: string): void {
     localStorage.setItem('authToken', token); 
   }
+  
+  saveCurrentUser(user: object): void {
+    localStorage.setItem('loggedInUser', JSON.stringify(user)); 
+  }
+
+  getCurrentUser(): object | null {
+    const user = localStorage.getItem('loggedInUser');
+    return user ? JSON.parse(user) : null;
+  }
+
 
   
   getToken(): string | null {
@@ -52,4 +62,12 @@ export class AuthService {
     console.log('URL from environment',url)
     return this.http.post<any>(url, { name, email, password, role });
   }
+   
+  verifyEmail(token: string): Observable<any> {
+    console.log('Requesting verification with token:', token); // Log the token
+    console.log('Verification Url', this.apiurl); // Log the token
+    return this.http.get(`${this.apiurl}/verify/${token}`);
+  }  
+  
+  
 }

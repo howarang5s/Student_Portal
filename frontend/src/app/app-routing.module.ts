@@ -9,6 +9,8 @@ import { ProfileComponent } from './students/profile/profile.component';
 import { TeacherProfileComponent } from './teacher/profile/profile.component';
 import { EditTeacherComponent } from './teacher/edit-teacher/edit-teacher.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { VerifyComponent } from './auth/verify/verify.component';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,11 +18,13 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'portal', component: PortalComponent },
   { path: 'add-student', component: AddStudentComponent },
-  { path: 'edit-student/:id', component: EditStudentComponent }, // ID for editing specific student
+  { path: 'edit-student/:id', component: EditStudentComponent }, 
   { path: 'student/profile' , component: ProfileComponent},
   { path: 'teacher/profile' , component: TeacherProfileComponent},
   { path: 'edit-teacher/:id' , component: EditTeacherComponent},
-  { path: 'forgot-password', component: ForgotPasswordComponent}
+  { path: 'forgot-password', component: ForgotPasswordComponent},
+  { path: 'verify/:token', component: VerifyComponent },
+  { path: 'dashboard',component:DashboardComponent}
 ];
 
 @NgModule({

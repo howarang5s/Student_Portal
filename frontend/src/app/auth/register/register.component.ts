@@ -3,6 +3,8 @@ import { AbstractControl,AbstractControlOptions,FormBuilder, FormGroup, Validato
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth-service.service';
+import { EmailVerificationDialogComponent } from '../email-verification-dialog/email-verification-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-register',
@@ -15,7 +17,7 @@ export class RegisterComponent {
   errorMessage: string = '';
   
   
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService: AuthService, private dialog: MatDialog) {
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -84,12 +86,24 @@ export class RegisterComponent {
         .subscribe({
           next: (response) => {
             this.authService.saveToken(response.token);
+            const emailToken = response.emailToken
+            
+            const dialogRef = this.dialog.open(EmailVerificationDialogComponent, {
+              width: '400px',
+              data: { email, emailToken }
+            });
 
-            if (role === 'student') {
-              this.router.navigate(['/student/profile']);
-            } else {
-              this.router.navigate(['/portal']);
-            }
+            
+            dialogRef.afterClosed().subscribe(verified => {
+              if (verified) {
+                this.router.navigate(['/login']);
+              }
+            });
+            // if (role === 'student') {
+            //   this.router.navigate(['/student/profile']);
+            // } else {
+            //   this.router.navigate(['/portal']);
+            // }
           },
           error: (err) => {
             this.errorMessage = err.error.message || 'Registration failed. Please try again.';

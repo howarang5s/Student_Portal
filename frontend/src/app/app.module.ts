@@ -24,7 +24,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { EditTeacherComponent } from './teacher/edit-teacher/edit-teacher.component';
 import { TeacherProfileComponent } from './teacher/profile/profile.component';
 import { CommonModule } from '@angular/common';
-import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component'; 
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EmailVerificationDialogComponent } from './auth/email-verification-dialog/email-verification-dialog.component';
+import { VerifyComponent } from './auth/verify/verify.component';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { AddTeacherComponent } from './admin/add-teacher/add-teacher.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list';
+
+
 
 
 
@@ -39,7 +48,11 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
     ProfileComponent,
     EditTeacherComponent,
     TeacherProfileComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    EmailVerificationDialogComponent,
+    VerifyComponent,
+    DashboardComponent,
+    AddTeacherComponent
   ],
   imports: [
     BrowserModule,
@@ -57,7 +70,10 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
     FormsModule,
     MatInputModule,
     MatMenuModule,
-    CommonModule
+    CommonModule,
+    MatDialogModule,
+    MatSidenavModule,
+    MatListModule
     
   ],
   providers: [],

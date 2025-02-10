@@ -6,12 +6,15 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['teacher', 'student'], default: 'teacher' }, // Role can be 'teacher' or 'student'
+  role: { type: String, enum: ['teacher', 'student','admin'], default: 'teacher' }, // Role can be 'teacher' or 'student'
+  isVerifiedEmail: {type:Boolean,defaultValue: false,},
+  emailToken: {type: String,},
   
 });
 
 
 userSchema.pre('save', async function (next) {
+  console.log('Lets save it')
   if (!this.isModified('password')) {
     return next();
   }

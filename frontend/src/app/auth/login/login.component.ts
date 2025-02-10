@@ -37,17 +37,22 @@ export class LoginComponent {
 
       this.authService.login(email,password).subscribe({
           next:(response)=>{
+            console.log(response.user);
             if (!response.token) {
               console.error("No token received!");
               return;
             }
 
             console.log("Received Token:", response.token);
-            this.authService.saveToken(response.token); 
-            const userRole = response.userRole;
-
+            this.authService.saveToken(response.token);
+            this.authService.saveCurrentUser(response.user); 
+            const userRole = response.user.role;
+            console.log('User Role',userRole);
             if (userRole === 'student') {
               this.router.navigate(['/student/profile']);
+
+            }else if(userRole === 'admin'){
+              this.router.navigate(['dashboard']);
             } else {
               this.router.navigate(['/portal']);
             }

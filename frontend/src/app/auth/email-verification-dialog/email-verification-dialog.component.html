@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Email Verification</h2>
+<div mat-dialog-content>
+  <p>{{ message }}</p>
+  <p *ngIf="!isVerified">Time remaining: {{ countdown }}s</p>
+</div>
+
+<div mat-dialog-actions>
+  <button *ngIf="!isVerified" mat-button (click)="verifyEmail()">Verify Email</button>
+  <button *ngIf="showOkButton" mat-button (click)="closeDialog()">OK</button>
+</div>

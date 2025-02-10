@@ -2,11 +2,13 @@
 const Student = require('../models/Studentmodel'); // Adjust path if necessary
 
 const User = require('../models/Usermodel'); // Assuming you have the User model
+const {server_Error,response_Error} = require('../utils/error_and_responses')
+
 
 const addStudent = async (req, res) => {
   // Check if the authenticated user is a teacher
   if (req.userRole !== 'teacher') {
-    return res.status(403).json({ message: 'Permission denied. Only teachers can add students.' });
+    return res.status(403).json({ message: server_Error.permission_denied });
   }
 
   const { name, email, grade, profile, subject, marks } = req.body;
@@ -17,7 +19,7 @@ const addStudent = async (req, res) => {
 
     // If no user found with this email, return error
     if (!existingUser) {
-      return res.status(400).json({ message: 'No user found with this email. Please register the student first.' });
+      return res.status(400).json({ message: server_Error.existing_user });
     }
 
     // If the user exists, use the user's id as the userId for the student
@@ -39,10 +41,9 @@ const addStudent = async (req, res) => {
     await newStudent.save();
 
     // Respond with success message and student object
-    res.status(201).json({ message: 'Student added successfully', student: newStudent });
+    res.status(201).json({ message: response_Error.student_added, student: newStudent });
   } catch (error) {
-    console.error('Error adding student:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error });
   }
 };
 
@@ -50,12 +51,11 @@ const getProfile = async (req,res) => {
   try{
     const profile = await User.findOne({_id : req.userId });
     if (!profile){
-      return res.status(404).json({ message: 'Teacher not found' });
+      return res.status(404).json({ message: server_Error.teacher_not_found });
     }
     return res.status(200).json(profile)
   }catch{
-    console.error('Error fetching teacher profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error });
   }
 }
 
@@ -66,17 +66,16 @@ const getStudentProfile = async (req,res) => {
     const student = await Student.findById(studentId);
 
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: server_Error.student_existence });
     }
 
     // Ensure the student belongs to the current teacher
     if (student.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ message: 'You can only view students you are associated with.' });
+      return res.status(403).json({ message: server_Error.student_associated });
     }
     return res.status(200).json(student)
   }catch{
-    console.error('Error fetching teacher profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error });
   }
 }
 
@@ -87,17 +86,16 @@ const getStudentbyId = async (req,res) => {
     const student = await Student.findById(studentId);
 
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: server_Error.student_existence });
     }
 
     // Ensure the student belongs to the current teacher
     if (student.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ message: 'You can only view students you are associated with.' });
+      return res.status(403).json({ message: server_Error.student_associated });
     }
     return res.status(200).json(student)
   }catch{
-    console.error('Error fetching teacher profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error });
   }
 }
 
@@ -108,7 +106,7 @@ const getAllStudents = async (req, res) => {
       const students = await Student.find({ addedBy: req.userId }); // Filter students by the teacherId
 
       if (students.length === 0) {
-        return res.status(404).json({ message: 'No students found for this teacher' });
+        return res.status(404).json({ message: server_Error.student_not_exist });
       }
 
       return res.status(200).json(students); // Return the list of students added by the teacher
@@ -118,13 +116,12 @@ const getAllStudents = async (req, res) => {
     const student = await Student.findOne({ userId: req.userId });
 
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: server_Error.student_existence });
     }
 
     res.status(200).json(student); // Return the student's own profile
   } catch (error) {
-    console.error('Error fetching student profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error });
   }
 };
 
@@ -134,7 +131,7 @@ const getAllStudents = async (req, res) => {
 // Teacher can update a student's profile
 const updateAnyStudentProfile = async (req, res) => {
   if (req.userRole !== 'teacher') {
-    return res.status(403).json({ message: 'Permission denied. Only teachers can update students.' });
+    return res.status(403).json({ message: server_Error.permission_to_update });
   }
 
   const { studentId } = req.params; // Get studentId from URL params
@@ -143,12 +140,12 @@ const updateAnyStudentProfile = async (req, res) => {
     const student = await Student.findById(studentId);
 
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: server_Error.student_existence });
     }
 
     // Ensure the student belongs to the current teacher
     if (student.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ message: 'You can only update students you are associated with.' });
+      return res.status(403).json({ message: server_Error.student_associated });
     }
 
     // Update student's profile and grade
@@ -159,17 +156,16 @@ const updateAnyStudentProfile = async (req, res) => {
 
     await student.save();
 
-    res.status(200).json({ message: 'Student profile updated successfully', student });
+    res.status(200).json({ message: server_Error.update_student, student });
   } catch (error) {
-    console.error('Error updating student profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error });
   }
 };
 
 // Teacher can delete a student
 const deleteStudent = async (req, res) => {
   if (req.userRole !== 'teacher') {
-    return res.status(403).json({ message: 'Permission denied. Only teachers can delete students.' });
+    return res.status(403).json({ message: server_Error.permission_to_delete });
   }
 
   const { studentId } = req.params;
@@ -178,26 +174,25 @@ const deleteStudent = async (req, res) => {
     const student = await Student.findById(studentId);
 
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: server_Error.student_existence });
     }
 
     // Ensure the student belongs to the current teacher
     if (student.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ message: 'You can only delete students you are associated with.' });
+      return res.status(403).json({ message: server_Error.student_associated });
     }
 
     await student.deleteOne();
-    res.status(200).json({ message: 'Student deleted successfully' });
+    res.status(200).json({ message: response_Error.delete_student });
   } catch (error) {
-    console.error('Error deleting student:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error});
   }
 };
 
 const updateTeacherProfile = async (req, res) => {
   // Validate the teacher role
   if (req.userRole !== 'teacher') {
-    return res.status(403).json({ message: 'Permission denied. Only teachers can update their profile.' });
+    return res.status(403).json({ message: server_Error.permission_to_update_teacher_profile });
   }
 
   const { name, email } = req.body;  
@@ -205,18 +200,18 @@ const updateTeacherProfile = async (req, res) => {
 
   // Validate input fields
   if (!name || !email) {
-    return res.status(400).json({ message: 'Name and Email are required fields.' });
+    return res.status(400).json({ message: server_Error.name_and_email_req });
   }
 
   const nameRegex = /^[A-Za-z\s]{2,50}$/;
   if (!nameRegex.test(name)) {
-    return res.status(400).json({ message: 'Invalid email format' });
+    return res.status(400).json({ message: server_Error.name_format_error });
   }
 
   // Validate email format
   const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: 'Invalid email format' });
+    return res.status(400).json({ message: server_Error.email_verification_error });
   }
 
   try {
@@ -224,7 +219,7 @@ const updateTeacherProfile = async (req, res) => {
     const teacher = await User.findById(teacherId);
 
     if (!teacher) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: server_Error.student_existence });
     }
 
     
@@ -234,10 +229,10 @@ const updateTeacherProfile = async (req, res) => {
     await teacher.save();
 
     // Return the updated teacher profile
-    res.status(200).json({ message: 'Profile updated successfully', teacher });
+    res.status(200).json({ message: response_Error.teacher_update, teacher });
   } catch (error) {
-    console.error('Error updating teacher profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    
+    res.status(500).json({ message: server_Error.server_error });
   }
 };
 
@@ -248,8 +243,7 @@ const getAllUsers = async (req, res) => {
 
     res.status(200).json(users); // Return the student's own profile
   } catch (error) {
-    console.error('Error fetching student profile:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: server_Error.server_error  });
   }
 };
 
