@@ -128,6 +128,8 @@ const loginUser = async (req, res) => {
 // 1️⃣ Check if User Exists & Prompt for New Password
 const forgotPassword = async (req, res) => {
   const { email, newPassword } = req.body;
+  const emailToken = crypto.randomBytes(64).toString("hex");
+  console.log('Email TOken')
 
   try {
     
@@ -136,27 +138,35 @@ const forgotPassword = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: server_Error.email_verification_error });
     }
+    console.log('email is ok');
     // Validate password format
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
     if (!passwordRegex.test(newPassword)) {
       return res.status(400).json({ message: server_Error.password_verification_error });
     }
+    console.log('password is ok');
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ message: server_Error.user_notfound  });
     }
-    
+    console.log('User',user);
 
     if (!newPassword) {
       return res.json({ message: server_Error.new_password_error });
     }
 
+    
 
     user.password = newPassword;
+    user.emailToken = emailToken;
+    console.log('email is ok');
     await user.save();
 
-    res.json({ message: response_Error.forget_password_sucess });
+    console.log('Email TOken',emailToken);
+    sendmail(email, emailToken);
+
+    res.json({ message: response_Error.forget_password_sucess,emailToken });
   } catch (error) {
     res.status(500).json({ message: server_Error.server_error, error });
   }

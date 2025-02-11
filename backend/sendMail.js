@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 
 const sendMail = (email, emailToken) => {
     console.log('Congrats on entering in send mail function');
+    console.log('Email token in sendMail',emailToken,email)
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -13,7 +14,7 @@ const sendMail = (email, emailToken) => {
             pass: process.env.SMTP_PASS,
         },
     });
-
+    console.log('Email token in sendMail',emailToken,email)
     const mailOptions = {
         from: '"Your Company" <your-email@gmail.com>',
         to: email,
@@ -24,6 +25,7 @@ const sendMail = (email, emailToken) => {
            http://localhost:5000/api/verify/${emailToken} 
            Thanks`
     };
+    console.log('Email token in sendMail after sending mail',emailToken)
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {

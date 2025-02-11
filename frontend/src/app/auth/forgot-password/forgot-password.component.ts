@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/students/auth.service';
+import { AbstractControl, ValidationErrors, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth-service.service';
 import { Router } from '@angular/router';
+import { EmailVerificationDialogComponent } from '../email-verification-dialog/email-verification-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,11 +22,13 @@ export class ForgotPasswordComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(10)]]
+      newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(10)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(10)]],
     });
   }
 
@@ -43,6 +47,21 @@ export class ForgotPasswordComponent implements OnInit {
       (response) => {
         console.log("response",response);
         this.isLoading = false;
+        this.authService.saveToken(response.token);
+        const emailToken = response.emailToken
+        
+        const dialogRef = this.dialog.open(EmailVerificationDialogComponent, {
+          width: '400px',
+          data: { email, emailToken }
+        });
+
+        
+        dialogRef.afterClosed().subscribe(verified => {
+          if (verified) {
+            this.router.navigate(['/login']);
+          }
+        });
+
         // this.successMessage = 'Password updated successfully!';
         this.isSuccessMessage = true;
         this.isErrorMessage = false;
@@ -62,4 +81,21 @@ export class ForgotPasswordComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
   
+  passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
+      const passwordControl = form.get('password');
+      const confirmPasswordControl = form.get('confirmPassword');
+    
+      if (!passwordControl || !confirmPasswordControl) return null;
+    
+      const password = passwordControl.value;
+      const confirmPassword = confirmPasswordControl.value;
+    
+      if (password !== confirmPassword) {
+        confirmPasswordControl.setErrors({ mismatch: true }); 
+        return { mismatch: true };
+      } else {
+        confirmPasswordControl.setErrors(null);
+        return null;
+      }
+    }
 }

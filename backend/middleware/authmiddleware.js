@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const {server_Error} = require('../utils/error_and_responses');
+const { server_Error, response_Error } = require('../utils/error_and_responses');
+
 
 const authenticate = (req, res, next) => {
   try {
@@ -30,6 +31,7 @@ const authenticate = (req, res, next) => {
     // Pass control to the next middleware/route handler
     next();
   } catch (error) {
+    
     return res.status(403).json({ message: server_Error.authenticate_error });
   }
 };

@@ -34,9 +34,10 @@ app.use('/api/admin', adminRoutes);
 app.get('/api/verify/:token', async (req, res) => {
   try {
       const { token } = req.params;
-
+      console.log(token);
       // Find the user by emailToken
       const user = await User.findOne({ emailToken: token });
+      console.log('User',user);
 
       if (!user) {
           return res.status(400).send("Invalid verification link or user not found.");

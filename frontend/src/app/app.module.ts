@@ -5,7 +5,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';  // Import MatTableModule for mat-table
 import { MatSelectModule } from '@angular/material/select';  // Import MatSelectModule for mat-select and mat-option
-import { MatOptionModule } from '@angular/material/core'; 
+import { MatOption, MatOptionModule } from '@angular/material/core'; 
 import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,11 +17,11 @@ import { AddStudentComponent } from './students/add-student/add-student.componen
 import { EditStudentComponent } from './students/edit-student/edit-student.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './auth/register/register.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { EditTeacherComponent } from './teacher/edit-teacher/edit-teacher.component';
+import { EditTeacherComponent } from './admin/edit-teacher/edit-teacher.component';
 import { TeacherProfileComponent } from './teacher/profile/profile.component';
 import { CommonModule } from '@angular/common';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
@@ -32,6 +32,11 @@ import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { AddTeacherComponent } from './admin/add-teacher/add-teacher.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';  // Import MatToolbarModule
+import { MatButtonModule } from '@angular/material/button';    // If using buttons
+import { AdminProfileComponent } from './admin/profile/profile.component';
+import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
+
 
 
 
@@ -52,7 +57,9 @@ import {MatListModule} from '@angular/material/list';
     EmailVerificationDialogComponent,
     VerifyComponent,
     DashboardComponent,
-    AddTeacherComponent
+    AddTeacherComponent,
+    AdminProfileComponent,
+    EditAdminComponent
   ],
   imports: [
     BrowserModule,
@@ -73,7 +80,10 @@ import {MatListModule} from '@angular/material/list';
     CommonModule,
     MatDialogModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatOptionModule
     
   ],
   providers: [],

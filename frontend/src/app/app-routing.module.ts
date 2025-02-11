@@ -7,10 +7,13 @@ import { EditStudentComponent } from './students/edit-student/edit-student.compo
 import { RegisterComponent } from './auth/register/register.component';
 import { ProfileComponent } from './students/profile/profile.component';
 import { TeacherProfileComponent } from './teacher/profile/profile.component';
-import { EditTeacherComponent } from './teacher/edit-teacher/edit-teacher.component';
+import { EditTeacherComponent } from './admin/edit-teacher/edit-teacher.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 import { VerifyComponent } from './auth/verify/verify.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { AddTeacherComponent } from './admin/add-teacher/add-teacher.component';
+import { AdminProfileComponent } from './admin/profile/profile.component';
+import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -21,10 +24,14 @@ const routes: Routes = [
   { path: 'edit-student/:id', component: EditStudentComponent }, 
   { path: 'student/profile' , component: ProfileComponent},
   { path: 'teacher/profile' , component: TeacherProfileComponent},
-  { path: 'edit-teacher/:id' , component: EditTeacherComponent},
+  // { path: 'edit-teacher/:id' , component: EditTeacherComponent},
   { path: 'forgot-password', component: ForgotPasswordComponent},
   { path: 'verify/:token', component: VerifyComponent },
-  { path: 'dashboard',component:DashboardComponent}
+  { path: 'dashboard',component:DashboardComponent},
+  { path: 'add-teacher', component: AddTeacherComponent},
+  { path: 'edit-teacher/:id', component: EditTeacherComponent},
+  { path: 'admin/profile',component: AdminProfileComponent},
+  { path: 'edit-admin/:id', component: EditAdminComponent}
 ];
 
 @NgModule({

@@ -14,11 +14,13 @@ const userSchema = new mongoose.Schema({
 
 
 userSchema.pre('save', async function (next) {
-  console.log('Lets save it')
+  console.log('Lets save it before check for pass');
   if (!this.isModified('password')) {
     return next();
   }
+  console.log('Lets save it');
   this.password = await bcrypt.hash(this.password, 10);
+  console.log('Saved it');
   next();
 });
 

@@ -1,1 +1,47 @@
-<p>add-teacher works!</p>
+<mat-card class="form-card">
+    <mat-card-title>Add Teacher Data</mat-card-title>
+    <form [formGroup]="addTeacherForm" (ngSubmit)="onSubmit()">
+      <label>Name</label>
+      <mat-form-field appearance="outline">
+        <!-- <mat-label>Email</mat-label> -->
+        <input matInput formControlName="name" placeholder="Enter teacher name" />
+        <mat-error *ngIf="addTeacherForm.controls['name'].invalid && addTeacherForm.controls['name'].touched">
+            Name is required and must be between 4 and 12 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <label>Email</label> 
+      <mat-form-field appearance="outline">
+        <!-- <mat-label>Email</mat-label> -->
+        <input matInput formControlName="email" placeholder="Enter teacher email" />
+        <mat-error *ngIf="addTeacherForm.controls['email'].invalid && addTeacherForm.controls['email'].touched">
+          Email is required and must have @ symbol.
+        </mat-error>
+      </mat-form-field>
+
+
+      <label>Password</label> 
+      <mat-form-field class="full-width login-input" appearance="outline">
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" class="password-input" placeholder="Enter your password" required>
+        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" class="password-toggle">
+          <mat-icon class="password-icon">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error class="password-error" *ngIf="addTeacherForm.controls['password'].invalid && addTeacherForm.controls['password'].touched">
+          Password is required.
+        </mat-error>
+      </mat-form-field>
+
+      <label>Course</label> 
+      <mat-form-field appearance="outline">
+        <!-- <mat-label>Subject</mat-label> -->
+        <mat-select formControlName="course" placeholder="Select course">
+          <mat-option *ngFor="let subj of courses" [value]="subj">{{ subj }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="addTeacherForm.invalid">Add</button>
+        <button mat-button type="button" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-card>

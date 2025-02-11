@@ -1,9 +1,9 @@
 <div class="teacher-profile-container">
     <div class="profile-header">
-      <h2>Teacher Profile</h2>
+      <h2>Admin Profile</h2>
       <div class="buttons-container" >
         <button class="logout-button" (click)="logout()">Logout</button>
-        <!-- <button class="edit-button" (click)="editTeacher(teacherData)">Edit</button>       -->
+        <button class="edit-button" (click)="editAdmin(adminData)">Edit</button>      
       </div>
     </div>
   
@@ -18,13 +18,13 @@
     </div>
   
     <!-- Show Student Data if Exists -->
-    <div *ngIf="teacherData" class="profile-card">
+    <div *ngIf="adminData" class="profile-card">
       <div class="profile-header">
-        <h3>{{ teacherData.name }}</h3>
+        <h3>{{ adminData.name }}</h3>
       </div>
       <div class="profile-body">
-        <p><strong>Email:</strong> {{ teacherData.email }}</p>
-        <p><strong>Role:</strong> {{ teacherData.role }}</p>
+        <p><strong>Email:</strong> {{ adminData.email }}</p>
+        <p><strong>Role:</strong> {{ adminData.role }}</p>
       </div>
     </div>
   </div>

@@ -1,0 +1,28 @@
+<mat-card class="form-card">
+    <mat-card-title>Edit Admin Data</mat-card-title>
+    <form [formGroup]="adminForm" (ngSubmit)="onSubmit()">
+      <label>Name</label>
+      <mat-form-field appearance="outline">
+        <!-- <mat-label>Name</mat-label> -->
+        <input matInput formControlName="name" placeholder="Enter name" />
+        <mat-error *ngIf="adminForm.controls['name'].invalid && adminForm.controls['name'].touched">
+          Name is required and must be between 4 and 12 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <label>Email</label>
+      <mat-form-field appearance="outline">
+        <!-- <mat-label>Email</mat-label> -->
+        <input matInput formControlName="email" placeholder="Enter yur registered email" />
+        <mat-error *ngIf="adminForm.controls['email'].invalid && adminForm.controls['email'].touched">
+          Email is required and must have @ symbol.
+        </mat-error>
+      </mat-form-field>
+
+  
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="adminForm.invalid">Edit</button>
+        <button mat-button type="button" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-card>

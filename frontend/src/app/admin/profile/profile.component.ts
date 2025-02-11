@@ -1,28 +1,28 @@
 // teacher-profile.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TeacherProfileService } from '../profile.service';  // Import the ProfileService
+import { AdminService } from '../admin.service';  // Import the ProfileService
 
 @Component({
   selector: 'app-teacher-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class TeacherProfileComponent implements OnInit {
-  teacherData: any = null;
+export class AdminProfileComponent implements OnInit {
+  adminData: any = null;
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private profileService: TeacherProfileService, private router: Router) {}
+  constructor(private profileService: AdminService, private router: Router) {}
 
   ngOnInit() {
     this.fetchTeacherProfile();
   }
 
   fetchTeacherProfile() {
-    this.profileService.getTeacherProfile().subscribe(
+    this.profileService.getProfile().subscribe(
       (data) => {
-        this.teacherData = data;  // Assign the fetched data to the teacherData property
+        this.adminData = data;  // Assign the fetched data to the teacherData property
         this.isLoading = false;  // Stop the loading indicator
       },
       (error) => {
@@ -33,9 +33,9 @@ export class TeacherProfileComponent implements OnInit {
     );
   }
 
-  // editTeacher(teacherData: any) {
-  //   this.router.navigate(['/edit-teacher',teacherData._id ]); // Navigate to the edit page
-  // }
+  editAdmin(adminData: any) {
+    this.router.navigate(['/edit-admin',adminData._id ]); // Navigate to the edit page
+  }
 
   logout() {
     localStorage.removeItem('token');
