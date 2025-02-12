@@ -15,17 +15,28 @@ const addTeacher = async (req, res) => {
     console.log('User',req.body);
   
     try {
-        const role = 'teacher';
-        const emailToken = null;
-        console.log('User creation');
-        const newUser = new User({
-            name,
-            email,
-            password,
-            role,
-            emailToken,
-            isVerifiedEmail: false
-        });
+
+      const nameRegex = /^[A-Za-z\s]{2,50}$/;
+      if (!nameRegex.test(name)) {
+        return res.status(400).json({ message: server_Error.name_format_error });
+      }
+  
+      // Validate email format
+      const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: server_Error.email_verification_error });
+      }
+      const role = 'teacher';
+      const emailToken = null;
+      console.log('User creation');
+      const newUser = new User({
+          name,
+          email,
+          password,
+          role,
+          emailToken,
+          isVerifiedEmail: false
+      });
       await newUser.save();
 
       const existingUser = await User.findOne({ email });
@@ -84,17 +95,41 @@ const addTeacher = async (req, res) => {
     }
     const { teacherId } = req.params; // Get studentId from URL params
     console.log(teacherId);
+    
     try {
+      
 
       const teacher = await Teacher.findById(teacherId);
       console.log(teacher);
+      console.log(teacher.name);
+      const user = await User.findOne({name:teacher.name});
+      console.log(user);
+      
   
       if (!teacher) {
         return res.status(404).json({ message: server_Error.student_existence });
       }
-  
+
+      
+      const nameRegex = /^[A-Za-z\s]{2,50}$/;
+      if (!nameRegex.test(teacher.name)) {
+        return res.status(400).json({ message: server_Error.name_format_error });
+      }
+    
+      // Validate email format
+      const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+      if (!emailRegex.test(teacher.email)) {
+        return res.status(400).json({ message: server_Error.email_verification_error });
+      }
+
+
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
       // Update teacher's profile and grade
+      teacher.name = req.body.name || teacher.name;
+      teacher.email = req.body.email || teacher.email
       teacher.course = req.body.course || teacher.course;
+      await user.save();
   
       await teacher.save();
   
@@ -110,15 +145,28 @@ const addTeacher = async (req, res) => {
     }
   
     const { teacherId } = req.params;
-  
+    
     try {
+
       const teacher = await Teacher.findById(teacherId);
-  
+      const user = await User.findOne({name:teacher.name});
+      console.log('del',user);
       if (!teacher) {
         return res.status(404).json({ message: server_Error.student_existence });
       }
+      console.log('teach user id',teacher.userId);
+      const students = await Student.find({ addedBy: teacher.userId });
+      console.log(students);
+
+      if(students.length !== 0){
+        alert('First ask teacher to remove his students');
+        return res.status(404).json({ message: server_Error.student_existence });
+      }
+
+      
   
       await teacher.deleteOne();
+      await user.deleteOne();
       res.status(200).json({ message: response_Error.delete_student });
     } catch (error) {
       res.status(500).json({ message: server_Error.server_error});

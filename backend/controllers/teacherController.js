@@ -1,6 +1,6 @@
 
 const Student = require('../models/Studentmodel'); // Adjust path if necessary
-
+const Teacher = require('../models/Teachermodel');
 const User = require('../models/Usermodel'); // Assuming you have the User model
 const {server_Error,response_Error} = require('../utils/error_and_responses')
 
@@ -11,9 +11,40 @@ const addStudent = async (req, res) => {
     return res.status(403).json({ message: server_Error.permission_denied });
   }
 
-  const { name, email, grade, profile, subject, marks } = req.body;
+  const { name, email,password, grade, profile, subject, marks } = req.body;
+  console.log(name, email,password, grade, profile, subject, marks);
 
   try {
+    const nameRegex = /^[A-Za-z\s]{2,50}$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({ message: server_Error.name_format_error });
+    }
+    console.log('name is passed');
+
+    // Validate email format
+    const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: server_Error.email_verification_error });
+    }
+    console.log('email is passed');
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: server_Error.password_verification_error });
+    }
+    console.log('password is passed');
+    const role = 'student';
+    const emailToken = null;
+    console.log('User creation');
+    const newUser = new User({
+        name,
+        email,
+        password,
+        role,
+        emailToken,
+        isVerifiedEmail: false
+    });
+    await newUser.save();
+    console.log(newUser);
     // Check if a user with the provided email already exists
     const existingUser = await User.findOne({ email });
 
@@ -49,11 +80,14 @@ const addStudent = async (req, res) => {
 
 const getProfile = async (req,res) => {
   try{
-    const profile = await User.findOne({_id : req.userId });
-    if (!profile){
+    console.log(req.userId);
+    const userId = req.userId;
+    const teacher = await Teacher.findOne({ userId }).lean();
+    console.log(teacher);
+    if (!teacher){
       return res.status(404).json({ message: server_Error.teacher_not_found });
     }
-    return res.status(200).json(profile)
+    return res.status(200).json(teacher);
   }catch{
     res.status(500).json({ message: server_Error.server_error });
   }
@@ -138,6 +172,9 @@ const updateAnyStudentProfile = async (req, res) => {
 
   try {
     const student = await Student.findById(studentId);
+    console.log(student.name);
+    const user = await User.findOne({name:student.name});
+    console.log(user);
 
     if (!student) {
       return res.status(404).json({ message: server_Error.student_existence });
@@ -147,13 +184,15 @@ const updateAnyStudentProfile = async (req, res) => {
     if (student.addedBy.toString() !== req.userId) {
       return res.status(403).json({ message: server_Error.student_associated });
     }
-
+    user.email = req.body.email  || user.email;
     // Update student's profile and grade
+    student.email = req.body.email || student.email;
     student.marks = req.body.marks || student.marks;
     student.subject = req.body.subject || student.subject;
     student.profile = req.body.profile || student.profile;
     student.grade = req.body.grade || student.grade;
 
+    await user.save();
     await student.save();
 
     res.status(200).json({ message: server_Error.update_student, student });
@@ -172,6 +211,8 @@ const deleteStudent = async (req, res) => {
 
   try {
     const student = await Student.findById(studentId);
+    const user = await User.findOne({name:student.name});
+    console.log(user);
 
     if (!student) {
       return res.status(404).json({ message: server_Error.student_existence });
@@ -181,7 +222,7 @@ const deleteStudent = async (req, res) => {
     if (student.addedBy.toString() !== req.userId) {
       return res.status(403).json({ message: server_Error.student_associated });
     }
-
+    await user.deleteOne();
     await student.deleteOne();
     res.status(200).json({ message: response_Error.delete_student });
   } catch (error) {

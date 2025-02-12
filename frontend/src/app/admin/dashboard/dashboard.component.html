@@ -3,7 +3,6 @@
   
   <!-- Navbar -->
   <mat-toolbar color="primary" class="navbar">
-    <span class="nav-title">Admin Dashboard</span>
     <span class="spacer"></span>
     <button mat-button [matMenuTriggerFor]="userMenu">
       <mat-icon>account_circle</mat-icon>
@@ -24,6 +23,9 @@
     <!-- Sidebar -->
     <mat-drawer-container class="drawer-container">
       <mat-drawer mode="side" opened class="sidebar">
+        <div class="sidebar-header">
+          <h2>Admin Dashboard</h2>
+        </div>
         <mat-nav-list>
           <mat-list-item (click)="selectTab('dashboard')" [class.active]="selectedTab === 'dashboard'">
             <mat-icon>dashboard</mat-icon> Dashboard
@@ -41,21 +43,51 @@
       <mat-drawer-content class="content">
         <div *ngIf="selectedTab === 'dashboard'">
           <div class="card-container">
-            <mat-card class="info-card">
+            <mat-card class="info-card total-students">
               <mat-card-title>Total Students</mat-card-title>
-              <mat-card-content>{{ totalStudents }}</mat-card-content>
+              <mat-card-content><p><strong>No OF Students:</strong> {{ totalStudents }}</p></mat-card-content>
             </mat-card>
-            <mat-card class="info-card">
+            <mat-card class="info-card total-teachers">
               <mat-card-title>Total Teachers</mat-card-title>
-              <mat-card-content>{{ totalTeachers }}</mat-card-content>
+              <mat-card-content>
+                <p><strong>No OF Teachers:</strong> {{ totalTeachers }}</p>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="info-card best-student-card">
+              <mat-card-title>Best Student</mat-card-title>
+              <mat-card-content *ngIf="bestStudent">
+                <p><strong>Name:</strong> {{ bestStudent.name }}</p>
+                <p><strong>Marks:</strong> {{ bestStudent.marks }}/100</p>
+                <p><strong>Subject:</strong> {{ bestStudent.subject }}</p>
+              </mat-card-content>
+              <mat-card-content *ngIf="!bestStudent">
+                <p>No Data Available</p>
+              </mat-card-content>
+            </mat-card>
+        
+            <!-- Best Teacher Card -->
+            <mat-card class="info-card best-teacher-card">
+              <mat-card-title>Top Teacher</mat-card-title>
+              <mat-card-content *ngIf="bestTeacher">
+                <p><strong>Name:</strong> {{ bestTeacher.name }}</p>
+                <p><strong>Course:</strong> {{ bestTeacher.course }}</p>
+              </mat-card-content>
+              <mat-card-content *ngIf="!bestTeacher">
+                <p>No Data Available</p>
+              </mat-card-content>
             </mat-card>
           </div>
         </div>
         
         <div *ngIf="selectedTab === 'teachers'">
-          <button mat-raised-button color="primary" routerLink="/add-teacher">
-            <mat-icon>add</mat-icon> Add Teacher
-          </button>
+          <div class="teacher-header">
+            <h2 class="table-heading">Teacher Records</h2>
+            <button mat-raised-button color="primary" routerLink="/add-teacher">
+              <mat-icon>add</mat-icon> Add Teacher
+            </button>
+            
+          </div>
           <table mat-table [dataSource]="teachers" class="mat-elevation-z8">
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -96,6 +128,9 @@
         </div>
         
         <div *ngIf="selectedTab === 'students'">
+          <div class="student-header">
+            <h2 class="table-heading">Student Records</h2>
+          </div>        
           <table mat-table [dataSource]="students" class="mat-elevation-z8">
       
             <ng-container matColumnDef="name">

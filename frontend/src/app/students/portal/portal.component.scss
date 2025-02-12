@@ -3,14 +3,15 @@
   display: flex;
   justify-content: center;
   padding: 10px;
+  overflow: visible;
 }
 
 .portal-subtitle-and-add-btn {
-  display: flex;
+  display:flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
   width: 100%;
+  overflow: visible;
 }
 
 /* Wrapping buttons inside a flex container */
@@ -20,11 +21,11 @@
 }
 
 /* Button Styling */
-.add-data-btn {
-  background-color: #3b8d99;
-  color: white;
-  font-weight: bold;
-}
+// .add-data-btn {
+//   background-color: #3b8d99;
+//   color: white;
+//   font-weight: bold;
+// }
 
 .logout-btn {
   background-color: #d32f2f;
@@ -234,6 +235,7 @@
     button {
       width: 100%;
       padding: 12px;
+
     }
   }
 }

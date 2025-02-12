@@ -4,9 +4,10 @@
       <label>Name</label>
       <mat-form-field appearance="outline">
         <!-- <mat-label>Name</mat-label> -->
-        <mat-select formControlName="name" placeholder="Select student" >
+        <!-- <mat-select formControlName="name" placeholder="Select student" >
           <mat-option *ngFor="let user of users" [value]="user" (onSelectionChange)="change($event)">{{ user }}</mat-option>
-        </mat-select>  
+        </mat-select>   -->
+        <input matInput formControlName="name" placeholder="Enter your name" />
         <mat-error *ngIf="addStudentForm.controls['name'].invalid && addStudentForm.controls['name'].touched">
           Name is required and must be between 4 and 12 characters.
         </mat-error>
@@ -18,6 +19,17 @@
         <input matInput formControlName="email" placeholder="Enter your registered email" />
         <mat-error *ngIf="addStudentForm.controls['email'].invalid && addStudentForm.controls['email'].touched">
           Email is required and must have @ symbol.
+        </mat-error>
+      </mat-form-field>
+
+      <label>Password</label> 
+      <mat-form-field class="full-width login-input" appearance="outline">
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" class="password-input" placeholder="Enter your password" required>
+        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" class="password-toggle">
+          <mat-icon class="password-icon">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error class="password-error" *ngIf="addStudentForm.controls['password'].invalid && addStudentForm.controls['password'].touched">
+          Password is required.
         </mat-error>
       </mat-form-field>
   
@@ -32,10 +44,11 @@
       
       <label>Subject</label> 
       <mat-form-field appearance="outline">
+        <input readonly matInput formControlName="subject" placeholder="Enter assigned course" />
         <!-- <mat-label>Subject</mat-label> -->
-        <mat-select formControlName="subject" placeholder="Select subject">
+        <!-- <mat-select formControlName="subject" placeholder="Select subject">
           <mat-option *ngFor="let subj of subjects" [value]="subj">{{ subj }}</mat-option>
-        </mat-select>
+        </mat-select> -->
       </mat-form-field>
 
 

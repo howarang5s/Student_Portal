@@ -21,14 +21,15 @@ export class ProfileComponent implements OnInit {
   fetchStudentProfile() {
     this.profileService.getStudentProfile().subscribe(
       (data) => {
-        this.studentData = data;  
-        this.isLoading = false;  
+        this.studentData = data; 
+        this.isLoading = false;
       },
       (error) => {
         this.isLoading = false;  
         this.errorMessage = 'You have not been added by any teacher yet.';  
       }
     );
+    
   }
   logout() {
     localStorage.removeItem('token');
