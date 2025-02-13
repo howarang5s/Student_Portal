@@ -43,14 +43,14 @@ export class LoginComponent {
               return;
             }
 
-            console.log("Received Token:", response.token);
+            
             this.authService.saveToken(response.token);
             this.authService.saveCurrentUser(response.user); 
             const userRole = response.user.role;
             if(response.user.isVerifiedEmail === false){
                 alert('Please verify email..');
             }
-            console.log('User Role',userRole);
+            
             if (userRole === 'student' ) {
               this.router.navigate(['/student/profile']);
 

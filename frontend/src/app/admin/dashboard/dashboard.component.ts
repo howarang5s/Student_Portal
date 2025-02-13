@@ -9,17 +9,17 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  selectedTab: string = 'dashboard';  // Controls which section to show
+  selectedTab: string = 'dashboard';  
   teachers = new MatTableDataSource<any>([]);
   students = new MatTableDataSource<any>([]);
-  displayColumns: string[] = ['name', 'email', 'course', 'date', 'actions'];
-  displayColumnsforstudents: string[] = ['name', 'marks', 'subject', 'grade', 'date'];
+  displayColumns: string[] = ['name', 'email', 'subject', 'date', 'actions'];
+  displayColumnsforstudents: string[] = ['name', 'email','subject',  'date', 'actions'];
   totalTeachers: number = 0;
   totalStudents: number = 0;
   adminName: string = 'Admin';
 
-  bestStudent: any = null; // Stores the student with the highest marks
-  bestTeacher: any = null; // Stores the teacher with the highest number of students
+  bestStudent: any = null; 
+  bestTeacher: any = null; 
 
   constructor(private adminService: AdminService, private router: Router) {}
 
@@ -28,10 +28,6 @@ export class DashboardComponent implements OnInit {
     this.loadStudentsAndFindBestTeacher();
   }
 
-  
-
-  // Load Teachers
-  // Load Teachers
   loadTeachers() {
     this.adminService.getTeacher().subscribe(
       (data) => {
@@ -45,7 +41,7 @@ export class DashboardComponent implements OnInit {
 
           console.log('Teachers loaded. Now loading students...');
           
-          // Load students first, then find the best teacher
+          
           this.loadStudentsAndFindBestTeacher();
         } else {
           console.error('Received data is not an array:', data);
@@ -56,7 +52,7 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  // Load Students
+  
   loadStudentsAndFindBestTeacher() {
     this.adminService.getStudents().subscribe(
       (data) => {
@@ -70,7 +66,7 @@ export class DashboardComponent implements OnInit {
   
           console.log('Students loaded. Now finding the best teacher...');
           
-          // Now that students are loaded, find the best teacher
+          
           this.findBestTeacher();
           this.findBestStudent();
         } else {
@@ -82,7 +78,7 @@ export class DashboardComponent implements OnInit {
   }
   
 
-  // Find Best Student (Highest Marks)
+  
   findBestStudent() {
     if (this.students.data.length > 0) {
       this.bestStudent = this.students.data.reduce((prev, curr) => 
@@ -94,23 +90,21 @@ export class DashboardComponent implements OnInit {
   findBestTeacher() {
     console.log(this.students.data);
     if (this.teachers.filteredData.length > 0 && this.students.data.length > 0) {
-      // Step 1: Count students for each teacher
       const teacherStudentCount: { [key: string]: number } = {};
   
       this.students.data.forEach((student) => {
-        const teacherId = student.addedBy; // Assuming 'addedBy' contains the teacher's ID
+        const teacherId = student.addedBy; 
         if (teacherId) {
           teacherStudentCount[teacherId] = (teacherStudentCount[teacherId] || 0) + 1;
         }
       });
   
-      // Step 2: Find the teacher with the highest student count
+      
       let bestTeacher = null;
       let maxCount = 0;
   
       this.teachers.data.forEach((teacher) => {
-        const count = teacherStudentCount[teacher.userId] || 0; // Default to 0 if no students found
-        console.log(`count of student across each id:${teacher._id}`,count);
+        const count = teacherStudentCount[teacher.userId] || 0; 
         if (count > maxCount) {
           maxCount = count;
           bestTeacher = teacher;
@@ -127,24 +121,20 @@ export class DashboardComponent implements OnInit {
   }
   
 
-  // Edit Teacher
+  
   editTeacher(teacher: any) {
     this.router.navigate(['/edit-teacher', teacher._id]);
   }
 
-  // Delete Teacher
+  
   deleteTeacher(teacher: any) {
-    console.log('Lets del');
+    
     const index = this.teachers.data.findIndex((t) => t.localId === teacher.localId);
     if (index !== -1) {
-      console.log('Lets del');
-      console.log(this.teachers);
-      console.log(teacher._id);
       this.adminService.deleteTeacher(teacher._id).subscribe({
         next: () => {
           this.teachers.data.splice(index, 1);
           this.teachers._updateChangeSubscription();
-          console.log(this.teachers);
           localStorage.setItem('teachers', JSON.stringify(this.teachers.data));
           alert('Teacher deleted successfully!');
 
@@ -152,7 +142,35 @@ export class DashboardComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting teacher:', error);
-          alert('Failed to delete teacher. Please try again.');
+          alert('You can not delete teacher becuase teacher have to delete his associated students, first.');
+        },
+      });
+    }
+  }
+
+  editstudent(student: any) {
+    this.router.navigate(['/edit-student', student._id]);
+  }
+
+  
+  deletestudent(student: any) {
+    console.log('Lets del');
+    const index = this.students.data.findIndex((t) => t.localId === student.localId);
+    if (index !== -1) {
+      console.log(student._id);
+      this.adminService.deleteStudent(student._id).subscribe({
+        next: () => {
+          this.students.data.splice(index, 1);
+          console.log('Lets del',this.students.data);
+          this.students._updateChangeSubscription();
+          localStorage.setItem('students', JSON.stringify(this.students.data));
+          alert('Teacher deleted successfully!');
+
+          this.findBestTeacher();
+        },
+        error: (error) => {
+          console.error('Error deleting student:', error);
+          alert('You can not delete student becuase student have to delete his associated students, first.');
         },
       });
     }

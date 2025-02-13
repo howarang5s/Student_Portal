@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddStudentComponent } from './add-student.component';
+import { AddStudentByTeacherComponent } from './add-student.component';
 
-describe('AddStudentComponent', () => {
-  let component: AddStudentComponent;
-  let fixture: ComponentFixture<AddStudentComponent>;
+describe('AddStudentByTeacherComponent', () => {
+  let component: AddStudentByTeacherComponent;
+  let fixture: ComponentFixture<AddStudentByTeacherComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddStudentComponent]
+      declarations: [AddStudentByTeacherComponent]
     });
-    fixture = TestBed.createComponent(AddStudentComponent);
+    fixture = TestBed.createComponent(AddStudentByTeacherComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

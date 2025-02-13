@@ -1,69 +1,144 @@
 const Teacher = require('../models/Teachermodel'); // Adjust path if necessary
 const Student = require('../models/Studentmodel');
 const User = require('../models/Usermodel'); // Assuming you have the User model
-const {server_Error,response_Error} = require('../utils/error_and_responses')
+const {SERVER_ERROR,RESPONSE_ERROR} = require('../utils/constant');
 
+
+
+
+
+
+const addStudent = async (req, res) => {
+  // Check if the authenticated user is a teacher
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
+  }
+
+  const { name, email,password, subject } = req.body;
+  console.log(name, email,password,subject);
+
+  try {
+    const nameRegex = /^[A-Za-z\s]{2,50}$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({ message: SERVER_ERROR.NAME_FORMAT_ERROR});
+    }
+
+    // Validate email format
+    const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: SERVER_ERROR.PASSWORD_VERIFCIATION_ERROR });
+    }
+    const role = 'student';
+    const emailToken = null;
+    const newUser = new User({
+        name,
+        email,
+        password,
+        role,
+        subject,
+        emailToken,
+        isVerifiedEmail: false
+    });
+    await newUser.save();
+    // Check if a user with the provided email already exists
+    // const existingUser = await User.findOne({ email });
+
+    // // If no user found with this email, return error
+    // if (!existingUser) {
+    //   return res.status(400).json({ message: SERVER_ERROR.existing_user });
+    // }
+
+    // // If the user exists, use the user's id as the userId for the student
+    // const studentData = {
+    //   userId: existingUser._id, // Link student to the registered user
+    //   name,
+    //   email,
+    //   subject,
+    //   marks,
+    //   grade,
+    //   profile,
+    //   addedBy: req.userId, // Set the teacher's userId as who added the student
+    // };
+
+    // // Create a new student document
+    // const newStudent = new Student(studentData);
+
+    // // Save the student record to the database
+    // await newStudent.save();
+
+    // Respond with success message and student object
+    res.status(201).json({ message: RESPONSE_ERROR.STUDENTS_ADDED, user: newUser });
+  } catch (error) {
+    res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+  }
+};
 
 const addTeacher = async (req, res) => {
-    // Check if the authenticated user is a teacher
-    console.log('User Role',req.userRole);
+    
+    
     if (req.userRole!=='admin') {
-      return res.status(403).json({ message: server_Error.permission_denied });
+      return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
     }
   
-    const { name,email,password,course } = req.body;
-    console.log('User',req.body);
+    const { name,email,password,subject } = req.body;
+    
   
     try {
 
       const nameRegex = /^[A-Za-z\s]{2,50}$/;
       if (!nameRegex.test(name)) {
-        return res.status(400).json({ message: server_Error.name_format_error });
+        return res.status(400).json({ message: SERVER_ERROR.NAME_FORMAT_ERROR });
       }
   
       // Validate email format
       const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
       if (!emailRegex.test(email)) {
-        return res.status(400).json({ message: server_Error.email_verification_error });
+        return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
       }
       const role = 'teacher';
       const emailToken = null;
-      console.log('User creation');
+      
       const newUser = new User({
           name,
           email,
           password,
           role,
+          subject,
           emailToken,
           isVerifiedEmail: false
       });
       await newUser.save();
 
-      const existingUser = await User.findOne({ email });
+      // const existingUser = await User.findOne({ email });
       
-        // If no user found with this email, return error
-        if (!existingUser) {
-        return res.status(400).json({ message: server_Error.existing_user });
-        }
-      // If the user exists, use the user's id as the userId for the student
-      const teacherData = {
-        userId: existingUser._id, // Link student to the registered user
-        name,
-        email,
-        password,
-        course,
-      };
-      console.log(teacherData);
-      // Create a new student document
-      const newTeacher = new Teacher(teacherData);
+      //   // If no user found with this email, return error
+      //   if (!existingUser) {
+      //   return res.status(400).json({ message: SERVER_ERROR.EXISTING });
+      //   }
+      // // If the user exists, use the user's id as the userId for the student
+      // const teacherData = {
+      //   userId: existingUser._id, // Link student to the registered user
+      //   name,
+      //   email,
+      //   password,
+      //   course,
+      // };
+      
+      // // Create a new student document
+      // const newTeacher = new Teacher(teacherData);
   
-      // Save the student record to the database
-      await newTeacher.save();
+      // // Save the student record to the database
+      // await newTeacher.save();
   
       // Respond with success message and student object
-      res.status(201).json({ message: response_Error.student_added, teacher: newTeacher, user:newUser });
+      res.status(201).json({ message: RESPONSE_ERROR.STUDENTS_ADDED, user:newUser });
     } catch (error) {
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   };
 
@@ -72,119 +147,101 @@ const addTeacher = async (req, res) => {
       console.log(req.userRole)
       // If the authenticated user is a teacher, fetch only the students added by the teacher
       if (req.userRole==='admin') {
-        console.log('lets find teachers');
-        const teachers = await Teacher.find(); // Filter students by the teacherId
-        console.log('Teachers',teachers);
+        
+        const teachers = await User.find({role:'teacher'}); // Filter students by the teacherId
+        
   
         if (teachers.length === 0) {
-          return res.status(404).json({ message: server_Error.student_not_exist });
+          return res.status(404).json({ message: SERVER_ERROR.STUDENTS_NOT_EXIST });
         }
   
         return res.status(200).json(teachers); // Return the list of students added by the teacher
       }
     } catch (error) {
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   };
 
   // Teacher can update a student's profile
   const updateAnyTeacherProfile = async (req, res) => {
-    console.log('User Role',req.userRole);
+    
     if (req.userRole!=='admin') {
-      return res.status(403).json({ message: server_Error.permission_denied });
+      return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
     }
+    const { name, email,pass } = req.body;  
     const { teacherId } = req.params; // Get studentId from URL params
-    console.log(teacherId);
+    
     
     try {
       
 
-      const teacher = await Teacher.findById(teacherId);
-      console.log(teacher);
-      console.log(teacher.name);
-      const user = await User.findOne({name:teacher.name});
-      console.log(user);
+      const user = await User.findById(teacherId);
       
-  
-      if (!teacher) {
-        return res.status(404).json({ message: server_Error.student_existence });
+      
+      
+      if (!user) {
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
       }
 
       
       const nameRegex = /^[A-Za-z\s]{2,50}$/;
-      if (!nameRegex.test(teacher.name)) {
-        return res.status(400).json({ message: server_Error.name_format_error });
+      if (!nameRegex.test(user.name)) {
+        return res.status(400).json({ message: SERVER_ERROR.NAME_FORMAT_ERROR });
       }
     
       // Validate email format
       const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
-      if (!emailRegex.test(teacher.email)) {
-        return res.status(400).json({ message: server_Error.email_verification_error });
+      if (!emailRegex.test(user.email)) {
+        return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
       }
 
-
       user.name = req.body.name || user.name;
-      user.email = req.body.email || user.email;
-      // Update teacher's profile and grade
-      teacher.name = req.body.name || teacher.name;
-      teacher.email = req.body.email || teacher.email
-      teacher.course = req.body.course || teacher.course;
+      user.email = req.body.email || user.email
+      user.subject = req.body.subject || user.subject;
+  
       await user.save();
   
-      await teacher.save();
-  
-      res.status(200).json({ message: server_Error.update_student, teacher });
+      res.status(200).json({ message: RESPONSE_ERROR.UPDATE_STUDENT, user });
     } catch (error) {
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   };
 
   const deleteTeacher = async (req, res) => {
     if (req.userRole!=='admin') {
-      return res.status(403).json({ message: server_Error.permission_to_delete });
+      return res.status(403).json({ message: SERVER_ERROR.permission_to_delete });
     }
   
     const { teacherId } = req.params;
     
     try {
 
-      const teacher = await Teacher.findById(teacherId);
-      const user = await User.findOne({name:teacher.name});
-      console.log('del',user);
-      if (!teacher) {
-        return res.status(404).json({ message: server_Error.student_existence });
-      }
-      console.log('teach user id',teacher.userId);
-      const students = await Student.find({ addedBy: teacher.userId });
-      console.log(students);
-
-      if(students.length !== 0){
-        alert('First ask teacher to remove his students');
-        return res.status(404).json({ message: server_Error.student_existence });
-      }
-
+      const user = await User.findById(teacherId);
       
-  
-      await teacher.deleteOne();
+      
+      if (!user) {
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
+      }
+      
       await user.deleteOne();
-      res.status(200).json({ message: response_Error.delete_student });
+      res.status(200).json({ message: RESPONSE_ERROR.DELETE });
     } catch (error) {
-      res.status(500).json({ message: server_Error.server_error});
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR});
     }
   };
   
   const getAllStudents = async (req, res) => {
     try {
       
-        const students = await Student.find(); // Filter students by the teacherId
+        const students = await User.find({role:'student'}); // Filter students by the teacherId
   
         if (students.length === 0) {
-          return res.status(404).json({ message: server_Error.student_not_exist });
+          return res.status(404).json({ message: SERVER_ERROR.STUDENTS_NOT_EXIST });
         }
   
         return res.status(200).json(students); // Return the list of students added by the teacher
     } catch (error) {
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   };
 
@@ -192,11 +249,28 @@ const addTeacher = async (req, res) => {
     try{
       const profile = await User.findOne({_id : req.userId });
       if (!profile){
-        return res.status(404).json({ message: server_Error.teacher_not_found });
+        return res.status(404).json({ message: SERVER_ERROR.TEACHER_NOT_FOUND });
       }
       return res.status(200).json(profile)
     }catch{
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+    }
+  }
+  
+  const getStudentbyId = async (req,res) => {
+    const { studentId } = req.params; 
+    try{
+      
+      const user = await User.findById(studentId);
+  
+      if (!user) {
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
+      }
+  
+      
+      return res.status(200).json(user)
+    }catch{
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   }
 
@@ -204,62 +278,126 @@ const addTeacher = async (req, res) => {
     const { teacherId } = req.params; 
     try{
       
-      const teacher = await Teacher.findById(teacherId);
+      const teacher = await User.findById(teacherId);
   
       if (!teacher) {
-        return res.status(404).json({ message: server_Error.student_existence });
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
       }
       return res.status(200).json(teacher)
     }catch{
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   }
 
   const updateAdminProfile = async (req, res) => {
-    // Validate the teacher role
+    
     if (req.userRole !== 'admin') {
-      return res.status(403).json({ message: server_Error.permission_to_update_teacher_profile });
+      return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED_TO_UPDATE_TEACHER_PROFILE });
     }
   
     const { name, email } = req.body;  
     const { adminId } = req.params;
   
-    // Validate input fields
+    
     if (!name || !email) {
-      return res.status(400).json({ message: server_Error.name_and_email_req });
+      return res.status(400).json({ message: SERVER_ERROR.NAME_AND_EMAIL });
     }
   
     const nameRegex = /^[A-Za-z\s]{2,50}$/;
     if (!nameRegex.test(name)) {
-      return res.status(400).json({ message: server_Error.name_format_error });
+      return res.status(400).json({ message: SERVER_ERROR.NAME_FORMAT_ERROR });
     }
   
-    // Validate email format
+    
     const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: server_Error.email_verification_error });
+      return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
     }
   
     try {
-      // Find the teacher by ID and update their profile
+      
       const admin = await User.findById(adminId);
       console.log(admin);
   
       if (!admin) {
-        return res.status(404).json({ message: server_Error.student_existence });
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
       }
   
       
       admin.name = req.body.name || admin.email;
       admin.email = req.body.email || admin.email;
-      console.log(admin);
       await admin.save();
   
       // Return the updated teacher profile
-      res.status(200).json({ message: response_Error.teacher_update, admin });
+      res.status(200).json({ message: RESPONSE_ERROR.TEACHER_UPDATE, admin });
     } catch (error) {
       
-      res.status(500).json({ message: server_Error.server_error });
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+    }
+  };
+
+  
+  const updateAnyStudentProfile = async (req, res) => {
+    
+    if (req.userRole!=='admin') {
+      return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
+    }
+    const { name, email,pass } = req.body;  
+    const { studentId } = req.params; // Get studentId from URL params
+    
+    
+    try {
+      const user = await User.findById(studentId);
+      
+      if (!user) {
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
+      }
+      console.log(user);
+      
+      const nameRegex = /^[A-Za-z\s]{2,50}$/;
+      if (!nameRegex.test(user.name)) {
+        return res.status(400).json({ message: SERVER_ERROR.NAME_FORMAT_ERROR });
+      }
+      console.log('email is ok'); 
+      // Validate email format
+      const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+      if (!emailRegex.test(user.email)) {
+        return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
+      }
+      console.log('password is ok'); 
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+      user.subject = req.body.subject || user.subject;
+  
+      await user.save();
+  
+      res.status(200).json({ message: RESPONSE_ERROR.UPDATE_STUDENT, user });
+    } catch (error) {
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+    }
+  };
+  
+  // Teacher can delete a student
+  const deleteStudent = async (req, res) => {
+    if (req.userRole !== 'admin') {
+      return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
+    }
+  
+    const { studentId } = req.params;
+  
+    try {
+      const user = await User.findById(studentId);
+      console.log(user);
+  
+      if (!user) {
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
+      }
+  
+      
+      await user.deleteOne();
+      res.status(200).json({ message: RESPONSE_ERROR.DELETE });
+    } catch (error) {
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR});
     }
   };
   
@@ -272,6 +410,11 @@ const addTeacher = async (req, res) => {
     getAllTeachers,
     getAllStudents,
     getTeacherbyId,
+    getStudentbyId,
     getAdminProfile,
-    updateAdminProfile
+    updateAdminProfile,
+    addStudent,
+    updateAnyStudentProfile,
+    deleteStudent
+    
   };

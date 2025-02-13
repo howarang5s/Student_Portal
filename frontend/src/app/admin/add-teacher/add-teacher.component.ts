@@ -27,7 +27,7 @@ export class AddTeacherComponent {
       name: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8) ]],
-      course: ['', Validators.required],
+      subject: ['', Validators.required],
     });
   }
 

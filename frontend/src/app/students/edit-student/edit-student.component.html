@@ -4,7 +4,7 @@
       <label>Name</label>
       <mat-form-field appearance="outline">
         <!-- <mat-label>Name</mat-label> -->
-        <input matInput formControlName="name" placeholder="Enter name" />
+        <input readonly matInput formControlName="name" placeholder="Enter name" />
         <mat-error *ngIf="editStudentForm.controls['name'].invalid && editStudentForm.controls['name'].touched">
           Name is required and must be between 4 and 12 characters.
         </mat-error>
@@ -13,7 +13,7 @@
       <label>Email</label>
       <mat-form-field appearance="outline">
         <!-- <mat-label>Email</mat-label> -->
-        <input matInput formControlName="email" placeholder="Enter yur registered email" />
+        <input readonly matInput formControlName="email" placeholder="Enter yur registered email" />
         <mat-error *ngIf="editStudentForm.controls['email'].invalid && editStudentForm.controls['email'].touched">
           Email is required and must have @ symbol.
         </mat-error>
@@ -30,10 +30,11 @@
   
       <label>Subject</label>
       <mat-form-field appearance="outline">
+        <input readonly matInput formControlName="subject" placeholder="Enter assigned course" />
         <!-- <mat-label>Subject</mat-label> -->
-        <mat-select formControlName="subject">
+        <!-- <mat-select formControlName="subject">
           <mat-option *ngFor="let subj of subjects" [value]="subj">{{ subj }}</mat-option>
-        </mat-select>
+        </mat-select> -->
       </mat-form-field>
   
       <label>Grade</label>

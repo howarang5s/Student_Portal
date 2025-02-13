@@ -13,8 +13,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './auth/login/login.component';
 import { PortalComponent } from './students/portal/portal.component';
 import { ProfileComponent } from './students/profile/profile.component';
-import { AddStudentComponent } from './students/add-student/add-student.component';
-import { EditStudentComponent } from './students/edit-student/edit-student.component';
+import { AddStudentComponent } from './admin/add-student/add-student.component';
+import { EditStudentComponent } from './admin/edit-student/edit-student.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './auth/register/register.component';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
@@ -36,6 +36,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';  // Import MatTool
 import { MatButtonModule } from '@angular/material/button';    // If using buttons
 import { AdminProfileComponent } from './admin/profile/profile.component';
 import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
+import { EditStudentByTeacherComponent } from './students/edit-student/edit-student.component';
+import { AddStudentByTeacherComponent } from './students/add-student/add-student.component';
 
 
 
@@ -59,7 +61,9 @@ import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
     DashboardComponent,
     AddTeacherComponent,
     AdminProfileComponent,
-    EditAdminComponent
+    EditAdminComponent,
+    EditStudentByTeacherComponent,
+    AddStudentByTeacherComponent
   ],
   imports: [
     BrowserModule,

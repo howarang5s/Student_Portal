@@ -68,6 +68,7 @@ export class AuthService {
     console.log('Verification Url', this.apiurl); // Log the token
     return this.http.get(`${this.apiurl}/verify/${token}`);
   }  
+
   
   
 }

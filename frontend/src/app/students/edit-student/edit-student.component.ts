@@ -9,7 +9,7 @@ import { AuthService } from '../auth.service'; // Assuming you have an AuthServi
   templateUrl: './edit-student.component.html',
   styleUrls: ['./edit-student.component.scss']
 })
-export class EditStudentComponent implements OnInit {
+export class EditStudentByTeacherComponent implements OnInit {
   editStudentForm: FormGroup;
   studentId: string = '';
   subjects: string[] = ['Math', 'Science', 'English', 'History']; // Define subjects
@@ -55,7 +55,7 @@ export class EditStudentComponent implements OnInit {
 
   onSubmit() {
     if (this.editStudentForm.valid) {
-      console.log('Updated Student Data:', this.editStudentForm.value);
+      
       
       const token = this.authService.getToken();
 
@@ -70,7 +70,7 @@ export class EditStudentComponent implements OnInit {
       
       this.studentService.updateStudent(this.studentId, updatedStudentData).subscribe(
         (response) => {
-          console.log('Student updated successfully:', response);
+          
           alert('Student Updated Successfully!');
           this.router.navigate(['/portal']);
         },

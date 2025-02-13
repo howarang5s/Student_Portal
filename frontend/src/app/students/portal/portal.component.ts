@@ -22,7 +22,7 @@ export class PortalComponent implements OnInit {
   ngOnInit() {
     this.studentService.getStudents().subscribe(
       (data) => {
-        console.log('Students:', data); 
+        
   
         if (Array.isArray(data)) {  
           this.students.data = data.map((student_data: any,index: number) => ({
@@ -44,7 +44,7 @@ export class PortalComponent implements OnInit {
   
 
   editStudent(student: any) {
-    this.router.navigate(['/edit-student',student._id ]); 
+    this.router.navigate(['/editstudent',student._id ]); 
 
   }
 
@@ -70,7 +70,6 @@ export class PortalComponent implements OnInit {
     } else {
       alert('Student not found.');
     }
-    console.log('Now update the grades');
     this.calculateStatistics();
     
   }

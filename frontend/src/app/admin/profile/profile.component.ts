@@ -22,19 +22,19 @@ export class AdminProfileComponent implements OnInit {
   fetchTeacherProfile() {
     this.profileService.getProfile().subscribe(
       (data) => {
-        this.adminData = data;  // Assign the fetched data to the teacherData property
-        this.isLoading = false;  // Stop the loading indicator
+        this.adminData = data;  
+        this.isLoading = false;  
       },
       (error) => {
-        this.isLoading = false;  // Stop loading indicator
+        this.isLoading = false;  
         this.errorMessage = 'Failed to load teacher profile. Please try again later.';
-        console.error('Error fetching teacher profile:', error);  // Log the error
+        console.error('Error fetching teacher profile:', error);  
       }
     );
   }
 
   editAdmin(adminData: any) {
-    this.router.navigate(['/edit-admin',adminData._id ]); // Navigate to the edit page
+    this.router.navigate(['/edit-admin',adminData._id ]); 
   }
 
   logout() {

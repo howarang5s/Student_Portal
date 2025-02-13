@@ -48,7 +48,7 @@ export class AdminService {
   }
 
   updateTeacher(teacherId: string, teacherData: any, ): Observable<any> {
-    const url = `${this.apiUrl}/admin/update/${teacherId}`;
+    const url = `${this.apiUrl}/admin/updateTeacher/${teacherId}`;
     const token = this.authService.getToken();  
 
     
@@ -64,7 +64,7 @@ export class AdminService {
   }
 
   addTeacher(teacherData : any): Observable<any> {
-    const url = `${this.apiUrl}/admin/add`;
+    const url = `${this.apiUrl}/admin/addteacher`;
     const token = this.authService.getToken();  
 
     
@@ -80,7 +80,7 @@ export class AdminService {
   }
 
   deleteTeacher(teacherId: string): Observable<any> {
-    const url = `${this.apiUrl}/admin/delete/${teacherId}`;
+    const url = `${this.apiUrl}/admin/deleteTeacher/${teacherId}`;
     const token = this.authService.getToken();
   
     if (!token) {
@@ -138,5 +138,67 @@ export class AdminService {
     });
 
     return this.http.put<any>(`${this.apiUrl}/admin/update/profile/${id}`, data, { headers });
+  }
+
+  updateStudent(studentId: string, teacherData: any, ): Observable<any> {
+    const url = `${this.apiUrl}/admin/updateStudent/${studentId}`;
+    const token = this.authService.getToken();  
+
+    
+    if (!token) {
+      throw new Error('Token is missing or expired');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,  
+    });
+    console.log('headers',headers);
+    return this.http.put<any>(url, teacherData, { headers });
+  }
+
+  addStudent(teacherData : any): Observable<any> {
+    const url = `${this.apiUrl}/admin/addStudent`;
+    const token = this.authService.getToken();  
+
+    
+    if (!token) {
+      throw new Error('Token is missing or expired');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,  
+    });
+    console.log('headers',headers);
+    return this.http.post<any>(url, teacherData, { headers });  
+  }
+
+  deleteStudent(studentId: string): Observable<any> {
+    const url = `${this.apiUrl}/admin/deleteStudent/${studentId}`;
+    const token = this.authService.getToken();
+  
+    if (!token) {
+      throw new Error('Token is missing or expired');
+    }
+  
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+  
+    return this.http.delete<any>(url, { headers });  
+  }  
+  getStudentById(studentId: string): Observable<any> {
+    const url = `${this.apiUrl}/admin/student/${studentId}`;
+    const token = this.authService.getToken();  
+
+    
+    if (!token) {
+      throw new Error('Token is missing or expired');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,  
+    });
+    console.log('headers',headers);
+    return this.http.get<any>(url,{ headers });
   }
 }

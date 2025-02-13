@@ -26,7 +26,7 @@ export class EditTeacherComponent implements OnInit {
     this.editTeacherForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
-      course: ['',Validators.required]
+      subject: ['',Validators.required]
     });
   }
 
@@ -68,7 +68,6 @@ export class EditTeacherComponent implements OnInit {
       
       this.adminService.updateTeacher(this.teacherId, updatedTeacherData).subscribe(
         (response) => {
-          console.log('Student updated successfully:', response);
           alert('Student Updated Successfully!');
           this.router.navigate(['/dashboard']);
         },

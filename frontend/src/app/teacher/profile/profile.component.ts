@@ -22,11 +22,11 @@ export class TeacherProfileComponent implements OnInit {
   fetchTeacherProfile() {
     this.profileService.getTeacherProfile().subscribe(
       (data) => {
-        this.teacherData = data;  // Assign the fetched data to the teacherData property
-        this.isLoading = false;  // Stop the loading indicator
+        this.teacherData = data;  
+        this.isLoading = false;  
       },
       (error) => {
-        this.isLoading = false;  // Stop loading indicator
+        this.isLoading = false;  
         this.errorMessage = 'Failed to load teacher profile. Please try again later.';
         console.error('Error fetching teacher profile:', error);  // Log the error
       }
