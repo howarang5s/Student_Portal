@@ -110,6 +110,21 @@ export class AdminService {
     console.log('headers',headers);
     return this.http.get<any>(url, { headers });  
   }
+  getStudentsByTeacher(): Observable<any> {
+    const url = `${this.apiUrl}/admin/adminstudents`;
+    const token = this.authService.getToken();  
+    console.log(token);
+
+    if (!token) {
+      throw new Error('Token is missing or expired');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,  
+    });
+    console.log('headers',headers);
+    return this.http.get<any>(url, { headers });
+  }
 
   getProfile(): Observable<any> {
     const url = `${this.apiUrl}/admin/profile`;

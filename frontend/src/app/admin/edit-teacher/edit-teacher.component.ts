@@ -53,7 +53,7 @@ export class EditTeacherComponent implements OnInit {
 
   onSubmit() {
     if (this.editTeacherForm.valid) {
-      console.log('Updated Student Data:', this.editTeacherForm.value);
+      console.log('Updated Teacher Data:', this.editTeacherForm.value);
       
       const token = this.authService.getToken();
 
@@ -68,7 +68,7 @@ export class EditTeacherComponent implements OnInit {
       
       this.adminService.updateTeacher(this.teacherId, updatedTeacherData).subscribe(
         (response) => {
-          alert('Student Updated Successfully!');
+          alert('Teacher Updated Successfully!');
           this.router.navigate(['/dashboard']);
         },
         (error) => {

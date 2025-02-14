@@ -69,10 +69,11 @@ const addStudent = async (req, res) => {
 const getProfile = async (req,res) => {
   try{
     const userId = req.userId;
-    const teacher = await Teacher.findOne({ userId }).lean();
+    const teacher = await User.findOne({ _id:userId }).lean();
     if (!teacher){
       return res.status(404).json({ message: SERVER_ERROR.TEACHER_NOT_FOUND});
     }
+    console.log(teacher);
     return res.status(200).json(teacher);
   }catch{
     res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
@@ -180,6 +181,7 @@ const getAllStudents = async (req, res) => {
     res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
   }
 };
+
 
 
 

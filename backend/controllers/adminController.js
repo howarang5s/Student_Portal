@@ -198,8 +198,9 @@ const addTeacher = async (req, res) => {
       user.name = req.body.name || user.name;
       user.email = req.body.email || user.email
       user.subject = req.body.subject || user.subject;
-  
+      console.log('User:',user);
       await user.save();
+      
   
       res.status(200).json({ message: RESPONSE_ERROR.UPDATE_STUDENT, user });
     } catch (error) {
@@ -244,6 +245,20 @@ const addTeacher = async (req, res) => {
       res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
     }
   };
+  const getAllStudentsByadmin = async (req, res) => {
+    try {
+        
+        const students = await Student.find(); // Filter students by the teacherId
+        if (students.length === 0) {
+          return res.status(404).json({ message: SERVER_ERROR.STUDENTS_NOT_EXIST });
+        }
+  
+        return res.status(200).json(students); // Return the list of students added by the teacher
+    } catch (error) {
+      res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+    }
+  };
+  
 
   const getAdminProfile = async (req,res) => {
     try{
@@ -415,6 +430,7 @@ const addTeacher = async (req, res) => {
     updateAdminProfile,
     addStudent,
     updateAnyStudentProfile,
-    deleteStudent
+    deleteStudent,
+    getAllStudentsByadmin
     
   };

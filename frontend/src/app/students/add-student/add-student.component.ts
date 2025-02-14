@@ -7,6 +7,7 @@ import { AuthService } from '../auth.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { map } from 'rxjs/operators';
 import { TeacherProfileService } from 'src/app/teacher/profile.service';
+import { AdminService } from 'src/app/admin/admin.service';
 
 @Component({
   selector: 'app-add-student',
@@ -23,7 +24,7 @@ export class AddStudentByTeacherComponent {
   selectedUser: string = '';
   hidePassword: boolean = true; 
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router:Router, private studentService: StudentService, private authService: AuthService,private profileService: TeacherProfileService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router:Router, private studentService: StudentService, private adminService: AdminService,private profileService: TeacherProfileService) {
     this.addStudentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
       email: ['',Validators.required],
@@ -46,7 +47,7 @@ export class AddStudentByTeacherComponent {
           }));
             
           this.users = this.user.data
-            .filter((user) => user.role === 'student')  
+            .filter((user) => user.role === 'student' )  
             .map((user) => user.name);  
 
           console.log(this.users);

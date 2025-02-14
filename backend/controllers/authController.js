@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/Usermodel');
 const crypto = require('crypto');
-const sendmail = require('../sendMail');
+const sendOTPEmail = require('../sendMail');
 const {SERVER_ERROR,RESPONSE_ERROR} = require('../utils/constant')
 
 // Hash Password function
@@ -82,6 +82,9 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+  const otp = generateOTP(); // Generate OTP
+  const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
+  console.log(otp);
 
   try {
     // Validate email format
@@ -111,7 +114,13 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: SERVER_ERROR.CREDENTIALS });
     }
+    
     console.log(isMatch);
+    user.emailToken = otp;
+    await user.save();
+    if(user.isVerifiedEmail=== false){
+      sendOTPEmail(email, otp); // Send OTP via email
+    }
 
     // Generate JWT token
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -125,47 +134,127 @@ const loginUser = async (req, res) => {
   }
 };
 
+const sendMailTo = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
+    }
+
+    console.log("Received email:", email);
+    
+    const otp = generateOTP();
+    console.log("Generated OTP:", otp);
+    user.emailToken=otp;
+    await user.save();
+
+    // Send the OTP email
+    sendOTPEmail(email, otp);
+
+    // Respond with success and return the OTP (if needed for debugging)
+    res.status(200).json({ message: "OTP sent successfully", email, otp });
+
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+    res.status(500).json({ message: "Failed to send OTP" });
+  }
+};
 
 
 
 // 1️⃣ Check if User Exists & Prompt for New Password
+// const forgotPassword = async (req, res) => {
+//   const { email, newPassword } = req.body;
+//   const emailToken = crypto.randomBytes(64).toString("hex");
+
+//   try {
+//     sendmail(email, emailToken);
+//     // Validate email format
+//     const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+//     if (!emailRegex.test(email)) {
+//       return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
+//     }
+//     // Validate password format
+//     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
+//     if (!passwordRegex.test(newPassword)) {
+//       return res.status(400).json({ message: SERVER_ERROR.PASSWORD_VERIFCIATION_ERROR });
+//     }
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       return res.status(400).json({ message: SERVER_ERROR.USER_NOT_FOUND  });
+//     }
+
+//     if (!newPassword) {
+//       return res.json({ message: SERVER_ERROR.NEW_PASSWORD_ERROR });
+//     }
+
+    
+
+//     user.password = newPassword;
+//     user.emailToken = emailToken;
+//     await user.save();
+
+    
+
+//     res.json({ message:RESPONSE_ERROR.FORGOT_PASSWORD_UPDATE,emailToken });
+//   } catch (error) {
+//     res.status(500).json({ message: SERVER_ERROR.SERVER_ERR, error });
+//   }
+// };
+
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+
 const forgotPassword = async (req, res) => {
   const { email, newPassword } = req.body;
-  const emailToken = crypto.randomBytes(64).toString("hex");
+  // const otp = generateOTP(); // Generate OTP
+  // const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
+  // console.log(otp);
 
+  
   try {
-    
     // Validate email format
     const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: SERVER_ERROR.EMAIL_VERIFICATION_ERROR });
+      return res.status(400).json({ message: "Invalid email format." });
     }
+
     // Validate password format
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
     if (!passwordRegex.test(newPassword)) {
-      return res.status(400).json({ message: SERVER_ERROR.PASSWORD_VERIFCIATION_ERROR });
+      return res.status(400).json({ message: "Password must be 8-10 characters, contain at least one letter, one number, and one special character." });
     }
+
+    // sendOTPEmail(email, otp);
+
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: SERVER_ERROR.USER_NOT_FOUND  });
+      return res.status(400).json({ message: "User not found." });
     }
-
-    if (!newPassword) {
-      return res.json({ message: SERVER_ERROR.NEW_PASSWORD_ERROR });
+    console.log(user);
+    // Update user with OTP and expiry time
+    // user.emailToken = otp;
+    if(user.isVerifiedEmail === true){
+      user.password = newPassword;
+      await user.save();
+    }else{
+      res.status(400).json({message: "First verify your email"})
     }
-
     
 
-    user.password = newPassword;
-    user.emailToken = emailToken;
-    await user.save();
+    // sendOTPEmail(email, otp); // Send OTP via email
 
-    sendmail(email, emailToken);
-
-    res.json({ message:RESPONSE_ERROR.FORGOT_PASSWORD_UPDATE,emailToken });
+    res.json({ message: "OTP sent to your email. Please verify within 5 minutes." });
   } catch (error) {
-    res.status(500).json({ message: SERVER_ERROR.SERVER_ERR, error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -173,4 +262,6 @@ const forgotPassword = async (req, res) => {
 
 
 
-module.exports = { registerUser, loginUser, forgotPassword};
+
+
+module.exports = { registerUser, loginUser, forgotPassword, sendMailTo};

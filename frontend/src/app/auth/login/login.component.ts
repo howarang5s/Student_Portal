@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth-service.service';
-
+import { EmailVerificationDialogComponent } from '../email-verification-dialog/email-verification-dialog.component';
 import { HttpHeaders } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ export class LoginComponent {
     private http: HttpClient,
     private router: Router,
     private authService: AuthService,
+    private dialog: MatDialog
     
   ) {
     this.loginForm = this.fb.group({
@@ -42,13 +44,13 @@ export class LoginComponent {
               console.error("No token received!");
               return;
             }
-
             
             this.authService.saveToken(response.token);
             this.authService.saveCurrentUser(response.user); 
             const userRole = response.user.role;
-            if(response.user.isVerifiedEmail === false){
-                alert('Please verify email..');
+            
+            if( response.user.isVerifiedEmail === false){
+              alert('Please verify your email.....');
             }
             
             if (userRole === 'student' ) {
@@ -59,6 +61,7 @@ export class LoginComponent {
             } else {
               this.router.navigate(['/portal']);
             }
+            
 
             this.loading = false;
           },

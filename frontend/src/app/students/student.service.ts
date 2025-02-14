@@ -32,6 +32,22 @@ export class StudentService {
     console.log('headers',headers);
     return this.http.get<any>(url, { headers });  
   }
+  getStudentsByMe(): Observable<any> {
+    const url = `${this.apiUrl}/teacher/adminstudents`;
+    const token = this.authService.getToken();  
+    console.log(token);
+
+    
+    if (!token) {
+      throw new Error('Token is missing or expired');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,  
+    });
+    console.log('headers',headers);
+    return this.http.get<any>(url, { headers });  
+  }
 
   getStudentById(studentId: string): Observable<any> {
     const url = `${this.apiUrl}/teacher/student/${studentId}`;

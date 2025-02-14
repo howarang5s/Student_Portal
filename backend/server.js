@@ -31,31 +31,60 @@ app.use('/api/admin', adminRoutes);
 // const frontendPath = path.join(__dirname, 'frontend/build');
 // app.use(express.static(frontendPath));
 
-app.get('/api/verify/:token', async (req, res) => {
+// app.get('/api/verify/:token', async (req, res) => {
+//   try {
+//       const { token } = req.params;
+//       console.log(token);
+//       // Find the user by emailToken
+//       const user = await User.findOne({ emailToken: token });
+//       console.log('User',user);
+
+//       if (!user) {
+//           return res.status(400).send("Invalid verification link or user not found.");
+//       }
+
+//       // Update email verification status
+//       user.isVerifiedEmail = true;
+//       await user.save();
+
+//       res.json({
+//         message: "Email verified successfully!",
+//         isVerifiedEmail: user.isVerifiedEmail
+//       });
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).send("Server error.");
+//   }
+// });
+app.post('/api/verify-otp', async (req, res) => {
+  const { email, otp } = req.body;
+
   try {
-      const { token } = req.params;
-      console.log(token);
-      // Find the user by emailToken
-      const user = await User.findOne({ emailToken: token });
-      console.log('User',user);
+    const user = await User.findOne({ email });
+    console.log(user);
 
-      if (!user) {
-          return res.status(400).send("Invalid verification link or user not found.");
-      }
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
+    }
 
-      // Update email verification status
-      user.isVerifiedEmail = true;
-      await user.save();
+    if (!user.emailToken) {
+      return res.status(400).json({ message: "Invalid or expired OTP." });
+    }
 
-      res.json({
-        message: "Email verified successfully!",
-        isVerifiedEmail: user.isVerifiedEmail
-      });
+    // Clear OTP after successful verification
+    user.isVerifiedEmail = true;
+    user.emailToken = null;
+    
+    await user.save();
+    console.log(user);
+
+    res.json({ message: "OTP verified successfully! You can now log in.",isVerified:user.isVerifiedEmail });
   } catch (error) {
-      console.error(error);
-      res.status(500).send("Server error.");
+    res.status(500).json({ message: "Server error", error });
   }
 });
+
+
 
 // // Serve the index.html file for any unknown routes
 // app.get('*', (req, res) => {

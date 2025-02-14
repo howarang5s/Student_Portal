@@ -63,7 +63,7 @@ export class EditAdminComponent implements OnInit {
     this.adminService.updateProfile(this.adminId, updatedAdminData).subscribe(
       (response) => {
         this.isLoading = false;
-        console.log('Teacher profile updated successfully');
+        console.log('Admin profile updated successfully');
         this.router.navigate(['/admin/profile']);  // Navigate to profile view after update
       },
       (error) => {

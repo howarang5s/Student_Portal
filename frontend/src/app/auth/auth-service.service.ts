@@ -63,12 +63,18 @@ export class AuthService {
     return this.http.post<any>(url, { name, email, password, role });
   }
    
-  verifyEmail(token: string): Observable<any> {
-    console.log('Requesting verification with token:', token); // Log the token
-    console.log('Verification Url', this.apiurl); // Log the token
-    return this.http.get(`${this.apiurl}/verify/${token}`);
-  }  
+  verifyOtp(email: string, otp: string) {
+    return this.http.post<{ isVerified: boolean }>(`${this.apiurl}/verify-otp`, { email, otp });
+  }
+  
+  
+  resendOtp(email: string) {
+    return this.http.post<{ message: string }>('http://localhost:5000/api/resend-otp', { email });
+  }
 
+  sendOTP(email:string): Observable<any> {
+    return this.http.post<any>('http://localhost:5000/api/auth/sendMailto', { email });
+  }
   
   
 }

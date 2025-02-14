@@ -27,8 +27,8 @@ export class ForgotPasswordComponent implements OnInit {
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(10)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(10)]],
+      // newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(10)]],
+      // confirmPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(10)]],
     });
   }
 
@@ -36,47 +36,45 @@ export class ForgotPasswordComponent implements OnInit {
 
   onSubmit(): void {
     if (this.forgotPasswordForm.invalid) {
+      console.log('Invalid form');
       return;
     }
-
+  
     this.isLoading = true;
-    const { email, newPassword } = this.forgotPasswordForm.value;
-
-    
-    this.authService.forgotPassword(email, newPassword).subscribe(
-      (response) => {
-        console.log("response",response);
+    const { email } = this.forgotPasswordForm.value;
+    localStorage.setItem('resetemail', email);
+    console.log(email);
+  
+    this.authService.sendOTP(email).subscribe({
+      next: (response) => {
+        console.log('Email sent successfully to:', response.email);
         this.isLoading = false;
-        this.authService.saveToken(response.token);
-        const emailToken = response.emailToken
-        
+  
+        // Open dialog box
         const dialogRef = this.dialog.open(EmailVerificationDialogComponent, {
           width: '400px',
-          data: { email, emailToken }
+          disableClose: true,  // Prevent accidental closure
+          data: { email } 
         });
-
-        
+  
+        // After closing dialog, navigate if verified
         dialogRef.afterClosed().subscribe(verified => {
           if (verified) {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/reset-password']);
           }
         });
-
-        // this.successMessage = 'Password updated successfully!';
-        this.isSuccessMessage = true;
-        this.isErrorMessage = false;
-        
-        setTimeout(() => this.router.navigate(['/login']),1000);
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.error.message || 'Error updating password';
+        this.errorMessage = error.error.message || 'Error sending OTP';
         this.isErrorMessage = true;
-        this.isSuccessMessage = false;
       }
-    );
-    
+    });
   }
+  
+  
+  
+  
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }

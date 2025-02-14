@@ -1,6 +1,6 @@
 import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AdminService } from '../admin.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -12,6 +12,7 @@ export class DashboardComponent implements OnInit {
   selectedTab: string = 'dashboard';  
   teachers = new MatTableDataSource<any>([]);
   students = new MatTableDataSource<any>([]);
+  studs = new MatTableDataSource<any>([]);
   displayColumns: string[] = ['name', 'email', 'subject', 'date', 'actions'];
   displayColumnsforstudents: string[] = ['name', 'email','subject',  'date', 'actions'];
   totalTeachers: number = 0;
@@ -21,26 +22,53 @@ export class DashboardComponent implements OnInit {
   bestStudent: any = null; 
   bestTeacher: any = null; 
 
-  constructor(private adminService: AdminService, private router: Router) {}
+  constructor(private adminService: AdminService, private router: Router,private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.loadTeachers();
     this.loadStudentsAndFindBestTeacher();
+    this.loadStudents();
+    
+    // Get the tab from the URL (default to 'dashboard')
+    this.route.queryParams.subscribe(params => {
+      this.selectedTab = params['tab'] || 'dashboard';
+    });
+  
+    
   }
 
   loadTeachers() {
     this.adminService.getTeacher().subscribe(
       (data) => {
+        
         if (Array.isArray(data)) {
           this.teachers.data = data.map((teacher, index) => ({
             ...teacher,
             localId: index + 1,
           }));
           this.totalTeachers = this.teachers.data.length;
-          localStorage.setItem('teachers', JSON.stringify(this.teachers.data));
-
-          console.log('Teachers loaded. Now loading students...');
+          localStorage.setItem('teachers', JSON.stringify(this.teachers.data));          
           
+          this.loadStudentsAndFindBestTeacher();
+        } else {
+          console.error('Received data is not an array:', data);
+        }
+      },
+      (error) => console.error('Error fetching teachers:', error)
+    );
+  }
+
+  loadStudents() {
+    this.adminService.getStudents().subscribe(
+      (data) => {
+        
+        if (Array.isArray(data)) {
+          this.students.data = data.map((student, index) => ({
+            ...student,
+            localId: index + 1,
+          }));
+          this.totalStudents = this.students.data.length;
+          localStorage.setItem('students', JSON.stringify(this.students.data));          
           
           this.loadStudentsAndFindBestTeacher();
         } else {
@@ -54,17 +82,13 @@ export class DashboardComponent implements OnInit {
 
   
   loadStudentsAndFindBestTeacher() {
-    this.adminService.getStudents().subscribe(
+    this.adminService.getStudentsByTeacher().subscribe(
       (data) => {
         if (Array.isArray(data)) {
-          this.students.data = data.map((student, index) => ({
-            ...student,
+          this.studs.data = data.map((stud, index) => ({
+            ...stud,
             localId: index + 1,
           }));
-          this.totalStudents = this.students.data.length;
-          localStorage.setItem('students', JSON.stringify(this.students.data));
-  
-          console.log('Students loaded. Now finding the best teacher...');
           
           
           this.findBestTeacher();
@@ -80,45 +104,49 @@ export class DashboardComponent implements OnInit {
 
   
   findBestStudent() {
-    if (this.students.data.length > 0) {
-      this.bestStudent = this.students.data.reduce((prev, curr) => 
-        curr.marks > prev.marks ? curr : prev, this.students.data[0]
+    if (this.studs.data.length > 0) {
+      this.bestStudent = this.studs.data.reduce((prev, curr) => 
+        curr.marks > prev.marks ? curr : prev, this.studs.data[0]
       );
+      console.log(this.bestStudent);
     }
   }
 
   findBestTeacher() {
-    console.log(this.students.data);
-    if (this.teachers.filteredData.length > 0 && this.students.data.length > 0) {
-      const teacherStudentCount: { [key: string]: number } = {};
-  
-      this.students.data.forEach((student) => {
+    if (this.teachers.filteredData.length > 0 && this.studs.data.length > 0) {
+      const teacherStudentCount: { [key: string]: number } = {};      
+      this.studs.data.forEach((student, index) => {
         const teacherId = student.addedBy; 
         if (teacherId) {
           teacherStudentCount[teacherId] = (teacherStudentCount[teacherId] || 0) + 1;
-        }
+        }     
       });
   
-      
+      // Step 2: Find the teacher with the highest student count
       let bestTeacher = null;
       let maxCount = 0;
   
       this.teachers.data.forEach((teacher) => {
-        const count = teacherStudentCount[teacher.userId] || 0; 
+        const count = teacherStudentCount[teacher._id] || 0; // Get student count for teacher
+        
         if (count > maxCount) {
           maxCount = count;
           bestTeacher = teacher;
         }
       });
-      
-      
-      if(bestTeacher !== null){
+  
+      // Step 3: Assign the best teacher
+      if (bestTeacher !== null) {
         this.bestTeacher = bestTeacher;
-      }else{
-        this.bestTeacher = this.teachers.data[0];
+      } else {
+        this.bestTeacher = this.teachers.data[0]; // Default to the first teacher if no best found
       }
+      
+    } else {
+      console.log("No teachers or students found!");
     }
   }
+  
   
 
   
@@ -145,6 +173,7 @@ export class DashboardComponent implements OnInit {
           alert('You can not delete teacher becuase teacher have to delete his associated students, first.');
         },
       });
+      window.location.reload();
     }
   }
 
@@ -173,15 +202,17 @@ export class DashboardComponent implements OnInit {
           alert('You can not delete student becuase student have to delete his associated students, first.');
         },
       });
+      window.location.reload();
     }
   }
 
   
   selectTab(tabName: string) {
     this.selectedTab = tabName;
-    if (this.selectedTab === 'dashboard') {
-      this.loadTeachers();
-      this.loadStudentsAndFindBestTeacher();
-    }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tabName },
+      queryParamsHandling: 'merge'
+    });
   }
 }

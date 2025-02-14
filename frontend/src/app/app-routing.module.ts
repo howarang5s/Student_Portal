@@ -16,6 +16,7 @@ import { AdminProfileComponent } from './admin/profile/profile.component';
 import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
 import { EditStudentByTeacherComponent } from './students/edit-student/edit-student.component';
 import { AddStudentByTeacherComponent } from './students/add-student/add-student.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -36,6 +37,7 @@ const routes: Routes = [
   { path: 'edit-admin/:id', component: EditAdminComponent},
   { path: 'addstudent', component: AddStudentByTeacherComponent },
   { path: 'editstudent/:id', component: EditStudentByTeacherComponent }, 
+  { path: 'reset-password',component: ResetPasswordComponent}
 ];
 
 @NgModule({

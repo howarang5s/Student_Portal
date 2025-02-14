@@ -6,6 +6,7 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/', loginUser);
 router.post('/forgot-Password',forgotPassword);
-router.post('/sendmail', sendMailTo);
+router.post('/sendMailto',sendMailTo);
+
 
 module.exports = router;

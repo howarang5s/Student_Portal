@@ -38,9 +38,7 @@ import { AdminProfileComponent } from './admin/profile/profile.component';
 import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
 import { EditStudentByTeacherComponent } from './students/edit-student/edit-student.component';
 import { AddStudentByTeacherComponent } from './students/add-student/add-student.component';
-
-
-
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 
 
@@ -63,7 +61,8 @@ import { AddStudentByTeacherComponent } from './students/add-student/add-student
     AdminProfileComponent,
     EditAdminComponent,
     EditStudentByTeacherComponent,
-    AddStudentByTeacherComponent
+    AddStudentByTeacherComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
