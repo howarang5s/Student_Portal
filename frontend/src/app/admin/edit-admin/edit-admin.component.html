@@ -1,9 +1,11 @@
+<div class = "content">
+<div class = "form-wrapper" >
 <mat-card class="form-card">
     <mat-card-title>Edit Admin Data</mat-card-title>
     <form [formGroup]="adminForm" (ngSubmit)="onSubmit()">
       <label>Name</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Name</mat-label> -->
+        
         <input matInput formControlName="name" placeholder="Enter name" />
         <mat-error *ngIf="adminForm.controls['name'].invalid && adminForm.controls['name'].touched">
           Name is required and must be between 4 and 12 characters.
@@ -12,7 +14,6 @@
 
       <label>Email</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Email</mat-label> -->
         <input matInput formControlName="email" placeholder="Enter yur registered email" />
         <mat-error *ngIf="adminForm.controls['email'].invalid && adminForm.controls['email'].touched">
           Email is required and must have @ symbol.
@@ -26,3 +27,5 @@
       </div>
     </form>
   </mat-card>
+ </div> 
+</div> 

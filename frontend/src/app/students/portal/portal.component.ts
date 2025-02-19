@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../student.service';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-portal',
@@ -17,7 +18,7 @@ export class PortalComponent implements OnInit {
   mostFailedSubject: string = '';
 
 
-  constructor(private studentService: StudentService, private router: Router) {}
+  constructor(private studentService: StudentService, private router: Router, private snackbar:SnackbarService) {}
 
   ngOnInit() {
     this.studentService.getStudents().subscribe(
@@ -29,50 +30,43 @@ export class PortalComponent implements OnInit {
             ...student_data,
             localId: index + 1
           }));
-          localStorage.setItem('students', JSON.stringify(this.students.data));
           this.calculateStatistics();
           
         } else {
-          console.error('Received data is not an array:', data);
+          this.snackbar.showServiceFailureMessage('Received data is not an array:', data);
         }
       },
       (error) => {
-        console.error('Error fetching student data', error);
+        this.snackbar.showServiceFailureMessage('Error fetching student data:', error);
       }
     );
   }
   
 
   editStudent(student: any) {
-    this.router.navigate(['/editstudent',student._id ]); 
+    this.router.navigate(['student/edit-student',student._id ]); 
 
   }
 
   deleteStudent(student: any) {
-    const index = this.students.data.findIndex((s) => s.localId === student.localId); 
+    this.studentService.deleteStudent(student._id).subscribe({
+      next: () => { 
+        
+        this.students.data = this.students.data.filter(s => s.localId !== student.localId);
+              
+        this.students._updateChangeSubscription();
+
+        this.calculateStatistics();
   
-    if (index !== -1) {
-      
-      this.studentService.deleteStudent(student._id).subscribe({
-        next: (response) => { 
-          this.students.data.splice(index, 1);
-          this.students._updateChangeSubscription(); 
-          localStorage.setItem('students', JSON.stringify(this.students.data)); 
-          alert('Student deleted successfully!');
-        },
-        error: (error) => {
-          console.error('Error deleting student:', error);
-          alert('Failed to delete student. Please try again.');
-        }
-      
-      });
-      window.location.reload();
-    } else {
-      alert('Student not found.');
-    }
-    this.calculateStatistics();
-    
+        this.snackbar.showSuccessMessage('Student deleted successfully');
+      },
+      error: (error) => {
+        
+        this.snackbar.showServiceFailureMessage('Failed to delete student. Please try again.',error);
+      }
+    });
   }
+  
   
   
 

@@ -3,7 +3,6 @@
     <form [formGroup]="editStudentForm" (ngSubmit)="onSubmit()">
       <label>Name</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Name</mat-label> -->
         <input readonly matInput formControlName="name" placeholder="Enter name" />
         <mat-error *ngIf="editStudentForm.controls['name'].invalid && editStudentForm.controls['name'].touched">
           Name is required and must be between 4 and 12 characters.
@@ -12,7 +11,7 @@
 
       <label>Email</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Email</mat-label> -->
+        
         <input readonly matInput formControlName="email" placeholder="Enter yur registered email" />
         <mat-error *ngIf="editStudentForm.controls['email'].invalid && editStudentForm.controls['email'].touched">
           Email is required and must have @ symbol.
@@ -21,8 +20,8 @@
   
       <label>Marks</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Marks</mat-label> -->
-        <input matInput type="number" formControlName="marks" placeholder="Enter marks" />
+        
+        <input matInput type="number" formControlName="marks" placeholder="Enter marks" (keyup)="onKey($event)"/>
         <mat-error *ngIf="editStudentForm.controls['marks'].invalid && editStudentForm.controls['marks'].touched">
           Marks must be between 0 and 100.
         </mat-error>
@@ -31,23 +30,15 @@
       <label>Subject</label>
       <mat-form-field appearance="outline">
         <input readonly matInput formControlName="subject" placeholder="Enter assigned course" />
-        <!-- <mat-label>Subject</mat-label> -->
-        <!-- <mat-select formControlName="subject">
-          <mat-option *ngFor="let subj of subjects" [value]="subj">{{ subj }}</mat-option>
-        </mat-select> -->
       </mat-form-field>
   
       <label>Grade</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Grade</mat-label> -->
-        <mat-select formControlName="grade">
-          <mat-option *ngFor="let grade of grades" [value]="grade">{{ grade }}</mat-option>
-        </mat-select>
+        <input readonly matInput formControlName="grade" placeholder="Enter grade" />
       </mat-form-field>
 
       <label>Remarks</label>
       <mat-form-field appearance="outline">
-        <!-- <mat-label>Profile</mat-label> -->
         <input matInput formControlName="profile" placeholder="Enter remarks" />
         <mat-error *ngIf="editStudentForm.controls['profile'].invalid && editStudentForm.controls['profile'].touched">
           Profile is required.

@@ -1,15 +1,34 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: flex-start; 
+  width: calc(100vw - 250px); 
+  max-width: 100%;
+  min-height: calc(100vh - 60px); 
+  padding: 20px;
+  margin-top: 20px; 
+}
+
+.profile-wrapper {
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start; 
+  height: calc(100vh - 80px); 
+  padding: 20px;
+}
+
 .teacher-profile-container {
-    text-align: center;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-    position: relative;
-    height: 100vh;
-    background: linear-gradient(135deg, #88993b, #cfd161, #f35a5a);
+  width: 500px;
+  padding: 25px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
   }
 
   .buttons-container {
     display: flex;
-    gap: 2px; /* Space between Add Data and Logout buttons */
+    gap: 2px; 
   }
   
   .loading {

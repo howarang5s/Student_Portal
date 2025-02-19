@@ -4,6 +4,7 @@ import { AuthService } from '../auth-service.service';
 import { Router } from '@angular/router';
 import { EmailVerificationDialogComponent } from '../email-verification-dialog/email-verification-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -23,12 +24,12 @@ export class ForgotPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbar : SnackbarService
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      // newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(10)]],
-      // confirmPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(10)]],
+      
     });
   }
 
@@ -43,30 +44,31 @@ export class ForgotPasswordComponent implements OnInit {
     this.isLoading = true;
     const { email } = this.forgotPasswordForm.value;
     localStorage.setItem('resetemail', email);
-    console.log(email);
+    
   
     this.authService.sendOTP(email).subscribe({
       next: (response) => {
-        console.log('Email sent successfully to:', response.email);
+        this.snackbar.showSuccessMessage('Email sent successfully');
         this.isLoading = false;
   
-        // Open dialog box
+        
         const dialogRef = this.dialog.open(EmailVerificationDialogComponent, {
           width: '400px',
-          disableClose: true,  // Prevent accidental closure
+          disableClose: false,  
           data: { email } 
         });
   
-        // After closing dialog, navigate if verified
+        
         dialogRef.afterClosed().subscribe(verified => {
           if (verified) {
-            this.router.navigate(['/reset-password']);
+            this.router.navigate(['auth/reset-password']);
           }
         });
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = error.error.message || 'Error sending OTP';
+        this.snackbar.showServiceFailureMessage('Error sending OTP',error.error.message);
         this.isErrorMessage = true;
       }
     });

@@ -6,6 +6,7 @@ import { AuthService } from '../auth-service.service';
 import { EmailVerificationDialogComponent } from '../email-verification-dialog/email-verification-dialog.component';
 import { HttpHeaders } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginComponent {
     private http: HttpClient,
     private router: Router,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbar: SnackbarService
     
   ) {
     this.loginForm = this.fb.group({
@@ -32,6 +34,8 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit():void {}
+
   onSubmit() {
     if (this.loginForm.valid) {
       this.loading = true;
@@ -39,9 +43,9 @@ export class LoginComponent {
 
       this.authService.login(email,password).subscribe({
           next:(response)=>{
-            console.log(response.user);
+            
             if (!response.token) {
-              console.error("No token received!");
+              this.snackbar.showErrorMessage("No token received!");
               return;
             }
             
@@ -49,23 +53,24 @@ export class LoginComponent {
             this.authService.saveCurrentUser(response.user); 
             const userRole = response.user.role;
             
-            if( response.user.isVerifiedEmail === false){
-              alert('Please verify your email.....');
-            }
             
             if (userRole === 'student' ) {
+              
               this.router.navigate(['/student/profile']);
 
             }else if(userRole === 'admin'){
-              this.router.navigate(['dashboard']);
+              
+              this.router.navigate(['/admin/dashboard']);
             } else {
-              this.router.navigate(['/portal']);
+              
+              this.router.navigate(['/student/portal']);
             }
-            
+            this.snackbar.showSuccessMessage('User Logins Successfully');
 
             this.loading = false;
           },
           error:(err) => {
+            this.snackbar.showServiceFailureMessage('Try Again',err);
             this.errorMessage = err.error.message || 'Login failed. Please try again.';
             this.loading = false;
           }

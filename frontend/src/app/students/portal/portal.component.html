@@ -7,23 +7,23 @@
     <div class="portal-subtitle-and-add-btn">
       <mat-card-subtitle class="portal-subtitle">Students Summary</mat-card-subtitle>
 
-      <!-- Buttons Wrapper -->
+      
       <div class="buttons-container">
-        <button mat-icon-button routerLink="/addstudent" >
+        <button mat-icon-button routerLink="/student/add-student" >
           <mat-icon style="font-size: 25px; color: black;">add_circle_outline</mat-icon>
         </button>
 
-        <!-- Account Icon with MatMenu Trigger -->
+        
         <button mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon style="font-size: 25px; color: black;">account_circle</mat-icon>
         </button>
 
-        <!-- MatMenu for Profile and Logout -->
+        
         <mat-menu #menu="matMenu">
           <button mat-menu-item routerLink="/teacher/profile">
             <mat-icon>person</mat-icon> Profile
           </button>
-          <button mat-menu-item routerLink="/login">
+          <button mat-menu-item routerLink="/auth/login">
             <mat-icon>exit_to_app</mat-icon> Logout
           </button>
         </mat-menu>

@@ -1,4 +1,4 @@
-/* Full-page centered form container */
+
 .form-card {
   width: 500px;
   margin: 20px auto;
@@ -8,40 +8,38 @@
   background-color: #fff;
 }
 
-/* Form Title Styling */
+
 mat-card-title {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
-  // color: #3b8d99; /* Primary color */
+  
   margin-bottom: 20px;
 }
 
 label {
   font-size: 15px;
-  // font-weight: bold;
-  // color: #3b8d99; /* Primary color */
   margin-bottom: 20px;
 }
 
 mat-option {
-  background-color: #f0f0f0 !important; /* Light gray background */
-  color: black !important; /* Text color */
+  background-color: #f0f0f0 !important; 
+  color: black !important; 
 }
 
-/* Change background color when hovered */
+
 mat-option:hover {
-  background-color:rgba(74, 170, 154, 0.8) !important; /* Light blue on hover */
+  background-color:rgba(74, 170, 154, 0.8) !important; 
   color: black !important;
 }
 
-/* Form Fields Styling */
+
 mat-form-field {
   width: 100%;
   margin-bottom: 20px;
 }
 
-/* Styling for the submit button */
+
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -67,13 +65,13 @@ button[type='button'] {
   
 }
 
-/* Disable button styles */
+
 button[disabled] {
   background-color: #c1c1c1;
   cursor: not-allowed;
 }
 
-/* Custom Error Styling */
+
 mat-error {
   color: red;
   font-size: 12px;
@@ -81,19 +79,19 @@ mat-error {
   padding-top: 5px;
 }
 
-/* Field validation error */
+
 input.ng-invalid.ng-touched,
 mat-select.ng-invalid.ng-touched {
   border: 1px solid red;
 }
 
-/* Add some space between fields and improve input field height */
+
 mat-form-field input,
 mat-form-field select {
   height: 10px;
 }
 
-/* Responsive Design for Small Screens */
+
 @media (max-width: 600px) {
   .form-card {
     width: 90%;

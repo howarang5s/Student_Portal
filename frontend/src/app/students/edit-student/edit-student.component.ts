@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudentService } from '../student.service';  // Assuming you have a service to interact with the backend
-import { AuthService } from '../auth.service'; // Assuming you have an AuthService for handling token
+import { StudentService } from '../student.service';  
+import { AuthService } from '../auth.service'; 
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-edit-student',
@@ -12,15 +13,16 @@ import { AuthService } from '../auth.service'; // Assuming you have an AuthServi
 export class EditStudentByTeacherComponent implements OnInit {
   editStudentForm: FormGroup;
   studentId: string = '';
-  subjects: string[] = ['Math', 'Science', 'English', 'History']; // Define subjects
-  grades: string[] = ['A+', 'A-', 'B+', 'B-', 'F']; // Define grades
+  subjects: string[] = ['Math', 'Science', 'English', 'History']; 
+  grades: string[] = ['A+', 'A-', 'B+', 'B-', 'F']; 
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private studentService: StudentService, 
     private authService: AuthService, 
-    private router: Router 
+    private router: Router,
+    private snackbar: SnackbarService
   ) {
     this.editStudentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
@@ -43,11 +45,11 @@ export class EditStudentByTeacherComponent implements OnInit {
       
       this.studentService.getStudentById(this.studentId).subscribe(
         (studentData) => {
-          console.log(studentData);
+          
           this.editStudentForm.patchValue(studentData);
         },
         (error) => {
-          console.error('Error fetching student data:', error);
+          this.snackbar.showServiceFailureMessage('Error fetching student data:', error);
         }
       );
     }
@@ -60,7 +62,7 @@ export class EditStudentByTeacherComponent implements OnInit {
       const token = this.authService.getToken();
 
       if (!token) {
-        alert('You must be logged in to update a student.');
+        this.snackbar.showErrorMessage('You must be logged in to update a student.');
         return;
       }
 
@@ -71,23 +73,48 @@ export class EditStudentByTeacherComponent implements OnInit {
       this.studentService.updateStudent(this.studentId, updatedStudentData).subscribe(
         (response) => {
           
-          alert('Student Updated Successfully!');
-          this.router.navigate(['/portal']);
+          this.snackbar.showSuccessMessage('Student Updated Successfully');
+          this.router.navigate(['student/portal']);
         },
         (error) => {
-          console.error('Error updating student:', error);
-          alert('Failed to update student. Please try again later.');
+          this.snackbar.showServiceFailureMessage('Failed to update student. Please try again later.',error);
         }
       );
     } else {
-      alert('Please fill out the form correctly.');
+      this.snackbar.showErrorMessage('Please fill out the form correctly.')
     }
 
+  }
+  onKey(event:any){
+    
+    console.log(event.target.value);
+    let input:any = event.target.value;
+    let grade = '';
+    if (input > 0 && input <= 100){
+      if(input > 0 && input <= 33){
+        grade = 'F';
+      }else if(input > 33 && input <= 60){
+        grade = 'B-';
+      }else if(input > 60 && input <= 79){
+        grade = 'B+';
+      }else if(input > 79 && input <= 89){
+        grade = 'A-';
+      }else if(input > 89 && input <= 100){
+        grade = 'A+';
+      } 
+    }else{
+      this.snackbar.showErrorMessage('Invaid Input');
+    }
+    this.editStudentForm.patchValue({
+      grade:grade,
+      
+    });  
+    
   }
 
   onCancel() {
     
-    alert('Edit canceled.');
-    this.router.navigate(['/portal']);
+    this.snackbar.showErrorMessage('Edit canceled.');
+    this.router.navigate(['student/portal']);
   }
 }

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudentService } from 'src/app/students/student.service';  // Assuming you have a service to interact with the backend
-import { AuthService } from 'src/app/auth/auth-service.service'; // Assuming you have an AuthService for handling token
+import { StudentService } from 'src/app/students/student.service'; 
+import { AuthService } from 'src/app/auth/auth-service.service'; 
 import { AdminService } from '../admin.service';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-edit-student',
@@ -21,7 +22,8 @@ export class EditStudentComponent {
       private studentService: StudentService, 
       private authService: AuthService, 
       private router: Router, 
-      private adminService: AdminService
+      private adminService: AdminService,
+      private snackbar: SnackbarService
     ) {
       this.editStudentForm = this.fb.group({
         name: ['', [Validators.required, Validators.minLength(4)]],
@@ -41,11 +43,10 @@ export class EditStudentComponent {
         
         this.adminService.getStudentById(this.teacherId).subscribe(
           (teacherData) => {
-            console.log(teacherData);
             this.editStudentForm.patchValue(teacherData);
           },
           (error) => {
-            console.error('Error fetching student data:', error);
+            this.snackbar.showServiceFailureMessage('Error fetching student data:',error);
           }
         );
       }
@@ -53,12 +54,11 @@ export class EditStudentComponent {
   
     onSubmit() {
       if (this.editStudentForm.valid) {
-        console.log('Updated Student Data:', this.editStudentForm.value);
         
         const token = this.authService.getToken();
   
         if (!token) {
-          alert('You must be logged in to update a student.');
+          this.snackbar.showErrorMessage('You must be logged in to update a student.')
           return;
         }
   
@@ -68,23 +68,21 @@ export class EditStudentComponent {
         
         this.adminService.updateTeacher(this.teacherId, updatedTeacherData).subscribe(
           (response) => {
-            alert('Student Updated Successfully!');
-            this.router.navigate(['/dashboard']);
+            this.snackbar.showSuccessMessage('Student Updated Successfully!');
+            this.router.navigate(['/admin/students']);
           },
           (error) => {
-            console.error('Error updating student:', error);
-            alert('Failed to update student. Please try again later.');
+            this.snackbar.showServiceFailureMessage('Error updating student:', error);
           }
         );
       } else {
-        alert('Please fill out the form correctly.');
+        this.snackbar.showErrorMessage('Please fill out the form correctly.');
       }
-  
     }
   
     onCancel() {
       
-      alert('Edit canceled.');
-      this.router.navigate(['/dashboard']);
+      this.snackbar.showDefaultMessage('Edit canceled.');
+      this.router.navigate(['/admin/students']);
     }
 }

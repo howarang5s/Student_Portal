@@ -1,0 +1,16 @@
+<mat-toolbar color="primary" class="navbar">
+    <span class="spacer"></span>
+    <button mat-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+      <span>{{ adminName }}</span>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item routerLink="/admin/profile">
+        <mat-icon>person</mat-icon> Profile
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon> Logout
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+  

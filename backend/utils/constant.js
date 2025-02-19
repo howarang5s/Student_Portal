@@ -36,7 +36,7 @@ const RESPONSE_ERROR = {
     TEACHER_UPDATE: "Profile updated successfully",
 };
 
-// Use this method to ensure the object is correctly exported
+
 module.exports = {
     SERVER_ERROR,
     RESPONSE_ERROR

@@ -1,23 +1,23 @@
 <div class="teacher-profile-container">
     <div class="profile-header">
-      <h2 routerLink="/portal">Teacher Profile</h2>
+      <h2 routerLink="/student/portal">Teacher Profile</h2>
       <div class="buttons-container" >
         <button class="logout-button" (click)="logout()">Logout</button>
-        <!-- <button class="edit-button" (click)="editTeacher(teacherData)">Edit</button>       -->
+        
       </div>
     </div>
   
-    <!-- Show Loading -->
+    
     <div *ngIf="isLoading" class="loading">
       Loading...
     </div>
   
-    <!-- Show Error Message if No Teacher Added the Student -->
+    
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
   
-    <!-- Show Student Data if Exists -->
+    
     <div *ngIf="teacherData" class="profile-card">
       <div class="profile-header">
         <h3>{{ teacherData.name }}</h3>

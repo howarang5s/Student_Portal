@@ -3,11 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';  
 import { Router } from '@angular/router';  
 import { StudentService } from '../student.service';
-import { AuthService } from '../auth.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { map } from 'rxjs/operators';
 import { TeacherProfileService } from 'src/app/teacher/profile.service';
 import { AdminService } from 'src/app/admin/admin.service';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-add-student',
@@ -18,13 +17,15 @@ export class AddStudentByTeacherComponent {
   addStudentForm: FormGroup;
   students = new MatTableDataSource<any>([]);
   user = new MatTableDataSource<any>([]);
-  subjects: string[] = ['Math', 'Science', 'English', 'History']; // Define subjects
-  grades: string[] = ['A+', 'A-', 'B+', 'B-', 'F']; // Define grades
+  filteredUsers: string[] = [];
+  student: string[] = [];
+  subjects: string[] = ['Math', 'Science', 'English', 'History']; 
+  grades: string[] = ['A+', 'A-', 'B+', 'B-', 'F']; 
   users: string[] = [];
   selectedUser: string = '';
   hidePassword: boolean = true; 
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router:Router, private studentService: StudentService, private adminService: AdminService,private profileService: TeacherProfileService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router:Router, private studentService: StudentService, private adminService: AdminService,private profileService: TeacherProfileService,private snackbar: SnackbarService) {
     this.addStudentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
       email: ['',Validators.required],
@@ -36,73 +37,39 @@ export class AddStudentByTeacherComponent {
   }
 
   ngOnInit() {
-    this.studentService.getUsers().pipe(map(
-      (data: any) => {
-        console.log('Users:', data);  
-        if (Array.isArray(data)) {  
-          this.user.data = data.map((user_data: any,index: number) => ({
-            ...user_data,
-            
-            localId: index + 1
-          }));
-            
-          this.users = this.user.data
-            .filter((user) => user.role === 'student' )  
-            .map((user) => user.name);  
-
-          console.log(this.users);
-        } else {
-          console.error('Received data is not an array:', data);
-        }
-      })
-    ).subscribe({
-      next: (transformedData: any) => {
-        
-        console.log('Filtered Student Names:', this.users);
-      },
-      error:(error: any) => {
-        console.error('Error fetching student data', error);
+    
+    this.studentService.getUsers().subscribe(
+      (data)=>{
+        console.log(data);
+        this.user.data=data;
       }
-    });
-    // let teacher = this.profileService.getTeacherProfile().subscribe(
-    //   (response:any) => {
-    //     if(response !== null){
-    //       console.log('Get Teacher:', response);
-    //       this.addStudentForm.patchValue({
-    //         subject:response.course
-    //       })
-    //     }
-    //   },
-    //   (error)=>{
-    //     const random : number = Math.floor(Math.random() * this.subjects.length);
-    //       const result : string = this.subjects[random];
-    //       this.addStudentForm.patchValue({
-    //         subject:result
-    //       })
-    //   }
-    // )
+    )
+    this.studentService.getFilteredUsers().subscribe(
+      (data)=>{
+        console.log(data);
+        this.users = data.students;
+      }
+    )
   }
 
   onSubmit() {
 
     if (this.addStudentForm.valid) {
       const studentData = this.addStudentForm.value;
-      console.log('Student Data:', studentData);
-
       
       this.studentService.addStudent(studentData).subscribe(
         (response) => {
-          console.log('Student Added Successfully:', response);
-          alert('Student Added Successfully!');
-          this.router.navigate(['/portal']); 
+          
+          this.snackbar.showSuccessMessage('Student Added Successfully');
+          this.router.navigate(['student/portal']); 
         },
         (error) => {
           console.error('Error adding student:', error);
-          alert('There was an error adding the student. Please try again.');
+          this.snackbar.showServiceFailureMessage('There was an error adding the student. Please try again.',error);
         }
       );
     } else {
-      alert('Please fill out the form correctly.');
+      this.snackbar.showErrorMessage('Please fill out the form correctly.');
     }
   }
   change(event: any){
@@ -121,9 +88,37 @@ export class AddStudentByTeacherComponent {
     }
   }
 
+  onKey(event:any){
+    
+    console.log(event.target.value);
+    let input:any = event.target.value;
+    let grade = '';
+    if (input > 0 && input <= 100){
+      if(input > 0 && input <= 33){
+        grade = 'F';
+      }else if(input > 33 && input <= 60){
+        grade = 'B-';
+      }else if(input > 60 && input <= 79){
+        grade = 'B+';
+      }else if(input > 79 && input <= 89){
+        grade = 'A-';
+      }else if(input > 89 && input <= 100){
+        grade = 'A+';
+      } 
+    }else{
+      this.snackbar.showErrorMessage('Invaid Input');
+    }
+    this.addStudentForm.patchValue({
+      grade:grade,
+      
+    });  
+    
+  }
+
   onCancel() {
     this.addStudentForm.reset();
-    this.router.navigate(['/portal']);
+    this.snackbar.showDefaultMessage('Edit Cancelled')
+    this.router.navigate(['student/portal']);
   }
 
   togglePasswordVisibility() {

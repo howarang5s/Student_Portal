@@ -1,20 +1,21 @@
+
 <div class="student-profile-container">
     <div class="profile-header">
       <h2>Student Profile</h2>
       <button class="logout-button" (click)="logout()">Logout</button>
     </div>
   
-    <!-- Show Loading -->
+    
     <div *ngIf="isLoading" class="loading">
       Loading...
     </div>
   
-    <!-- Show Error Message if No Teacher Added the Student -->
+    
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
   
-    <!-- Show Student Data if Exists -->
+    
     <div *ngIf="studentData" class="profile-card">
       <div class="profile-header">
         <h3>{{ studentData.name }}</h3>
@@ -25,6 +26,7 @@
         <p><strong>Subject:</strong> {{ studentData.subject }}</p>
         <p><strong>Marks:</strong> {{ studentData.marks }}</p>
         <p><strong>Profile:</strong> {{ studentData.profile }}</p>
+        <p><strong>Teacher:</strong> {{ studentData.addedBy }}</p>
       </div>
     </div>
   </div>

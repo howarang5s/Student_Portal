@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AdminService } from '../admin.service';  // Import the ProfileService
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';  // For handling forms
+import { AdminService } from '../admin.service';  
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';  
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-edit-admin',
@@ -19,7 +20,8 @@ export class EditAdminComponent implements OnInit {
     private route: ActivatedRoute,  
     private adminService: AdminService,  
     private router: Router,  
-    private fb: FormBuilder  
+    private fb: FormBuilder,
+    private snackbar: SnackbarService
   ) {
     this.adminForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
@@ -39,14 +41,15 @@ export class EditAdminComponent implements OnInit {
     this.adminService.getProfile().subscribe(
       (data) => {
         this.adminData = data;
-        console.log(this.adminData);
+        
         this.adminForm.patchValue(this.adminData);  
         this.isLoading = false;
       },
       (error) => {
         this.isLoading = false;
         this.errorMessage = 'Error fetching admin data';
-        console.error(error);
+        this.snackbar.showServiceFailureMessage(this.errorMessage,error);
+    
       }
     );
   }
@@ -63,19 +66,21 @@ export class EditAdminComponent implements OnInit {
     this.adminService.updateProfile(this.adminId, updatedAdminData).subscribe(
       (response) => {
         this.isLoading = false;
-        console.log('Admin profile updated successfully');
-        this.router.navigate(['/admin/profile']);  // Navigate to profile view after update
+        this.snackbar.showSuccessMessage('Admin profile updated successfully');
+
+        this.router.navigate(['/admin/profile']);  
       },
       (error) => {
         this.isLoading = false;
-        console.error('Error updating profile:', error);
+        
         this.errorMessage = 'Failed to update profile. Please try again later.';
+        this.snackbar.showServiceFailureMessage(this.errorMessage,error);
       }
     );
   }
   onCancel() {
     
-    alert('Edit canceled.');
-    this.router.navigate(['/portal']);
+    this.snackbar.showDefaultMessage('Edit canceled.');
+    this.router.navigate(['admin/profile']);
   }
 }

@@ -1,7 +1,7 @@
-const Student = require('../models/Studentmodel'); // Adjust path if necessary
+const Student = require('../models/Studentmodel'); 
 const {SERVER_ERROR} = require('../utils/constant')
 
-// Get student profile (students can only see their own profile)
+
 const getStudentProfile = async (req, res) => {
   try {
     const student = await Student.findOne({ userId: req.userId });

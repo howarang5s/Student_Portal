@@ -1,13 +1,17 @@
-::ng-deep .cdk-overlay-backdrop {
-  background: rgba(0, 0, 0, 0.7) !important; // Darken the background
-}
 
 .mat-dialog-container {
-  background: #222; // Dark gray dialog background
+  background: #222; 
   color: white;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
   padding: 20px;
+}
+
+.otp-header {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 98%;
 }
 
 h2.mat-dialog-title {
@@ -30,7 +34,7 @@ h2.mat-dialog-title {
 }
 
 button {
-  background: #007bff;
+  background-color: #3b8d99;
   color: white;
   font-weight: bold;
   padding: 8px 15px;
@@ -38,7 +42,7 @@ button {
   transition: background 0.3s ease-in-out;
   
   &:hover {
-    background: #0056b3;
+    background: #3b8d99;
   }
 }
 

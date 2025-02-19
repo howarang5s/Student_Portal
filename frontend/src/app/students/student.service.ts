@@ -32,8 +32,9 @@ export class StudentService {
     console.log('headers',headers);
     return this.http.get<any>(url, { headers });  
   }
-  getStudentsByMe(): Observable<any> {
-    const url = `${this.apiUrl}/teacher/adminstudents`;
+
+  getFilteredUsers(): Observable<any> {
+    const url = `${this.apiUrl}/teacher/filteredStudents`;
     const token = this.authService.getToken();  
     console.log(token);
 
@@ -48,6 +49,7 @@ export class StudentService {
     console.log('headers',headers);
     return this.http.get<any>(url, { headers });  
   }
+
 
   getStudentById(studentId: string): Observable<any> {
     const url = `${this.apiUrl}/teacher/student/${studentId}`;

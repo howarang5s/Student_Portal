@@ -3,6 +3,7 @@ import { AbstractControl, ValidationErrors, FormBuilder, FormGroup, Validators }
 import { AuthService } from '../auth-service.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -22,7 +23,8 @@ export class ResetPasswordComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbar: SnackbarService
   ) {
     this.resetPasswordForm = this.fb.group({
       newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(10)]],
@@ -32,8 +34,7 @@ export class ResetPasswordComponent {
 
   ngOnInit(){
     this.resetPasswordForm.valueChanges.subscribe(() => {
-      console.log("Form Errors:", this.resetPasswordForm.errors); 
-      console.log("Confirm Password Errors:", this.resetPasswordForm.controls['confirmPassword'].errors);
+      
     });
   }
 
@@ -48,8 +49,9 @@ export class ResetPasswordComponent {
     this.authService.forgotPassword(email,newPassword).subscribe(
       (response) => {
         this.isLoading = false;
-        alert('Password is updated');
-        this.router.navigate(['/login']);
+        this.snackbar.showSuccessMessage('Password is Updated');
+        localStorage.removeItem('resetemail')
+        this.router.navigate(['auth/login']);
         
       },
       (error) => {
@@ -69,7 +71,6 @@ export class ResetPasswordComponent {
   passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
       const passwordControl = form.get('newPassword');
       const confirmPasswordControl = form.get('confirmPassword');
-      console.log('Password',passwordControl);
     
       if (!passwordControl || !confirmPasswordControl) return null;
     

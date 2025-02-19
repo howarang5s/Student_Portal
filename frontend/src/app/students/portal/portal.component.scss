@@ -1,4 +1,4 @@
-// Styles for the mat-card component
+
 .portal-container {
   display: flex;
   justify-content: center;
@@ -14,18 +14,13 @@
   overflow: visible;
 }
 
-/* Wrapping buttons inside a flex container */
+
 .buttons-container {
   display: flex;
-  gap: 2px; /* Space between Add Data and Logout buttons */
+  gap: 2px; 
 }
 
-/* Button Styling */
-// .add-data-btn {
-//   background-color: #3b8d99;
-//   color: white;
-//   font-weight: bold;
-// }
+
 
 .logout-btn {
   background-color: #d32f2f;
@@ -44,19 +39,19 @@
   min-width: 50px;
 }
 
-/* Conditional Colors */
+
 .f-grade {
-  background-color:rgba(255, 104, 151, 0.5); /* Light pink for failing grades */
+  background-color:rgba(255, 104, 151, 0.5);
   color:rgba(255, 181, 157, 1);
 }
 
 .b-grade {
-  background-color: rgba(255, 247, 245, 1); /* Light pink for passing grades */
+  background-color: rgba(255, 247, 245, 1);
   color:rgba(255, 181, 157, 1);
 }
 
 .a-grade {
-  background-color: rgba(104, 101, 99, 1); /* Light pink for passing grades */
+  background-color: rgba(104, 101, 99, 1); 
   color: rgba(192, 192, 192, 1);
 }
 
@@ -66,11 +61,10 @@
   width: 100%;
   max-width: 1200px;
   background-color: #ffffff;
-  // box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  // border-radius: 8px;
+  
   padding: 20px;
 
-  // Title and Subtitle Styling
+  
   .portal-header {
     margin-bottom: 15px;
   }
@@ -88,7 +82,7 @@
     margin-bottom: 20px;
   }
 
-  // Button Styling
+  
   button {
     margin-left: auto;
     background-color: White;
@@ -99,8 +93,7 @@
     box-shadow: none !important;
     border: none !important;
 
-    // border-radius: 4px;
-    // transition: background-color 0.3s ease-in-out;
+    
 
     &:hover {
       background-color: White;
@@ -108,7 +101,7 @@
   }
 
 
-  // Hoverable Boxes for Stats
+  
   .hoverable-boxes {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -122,12 +115,12 @@
         border-radius: 8px;
         text-align: center;
         cursor: pointer;
-        // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        
         transition: transform 0.3s ease, box-shadow 0.3s ease;
 
         &:hover {
           transform: scale(1.05);
-          // box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+          
         }
         mat-card-title {
           font-size: 18px;
@@ -142,12 +135,12 @@
         border-radius: 8px;
         text-align: center;
         cursor: pointer;
-        // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        
         transition: transform 0.3s ease, box-shadow 0.3s ease;
   
         &:hover {
           transform: scale(1.05);
-          // box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+          
         }
 
       mat-card-title {
@@ -171,16 +164,15 @@
   }
 
   .date-cell {
-    white-space: pre-line; /* Allow line breaks */
-    text-align: center;    /* Align text in center (optional) */
+    white-space: pre-line; 
+    text-align: center;    
   }
 
-  // Table Container Styling
+  
   table {
     width: 100%;
     margin-top: 20px;
-    // border-spacing: 0;
-    // border-collapse: collapse;
+    
     background-color: #fafafa;
 
     th, td {
@@ -189,7 +181,7 @@
       font-size: 14px;
       font-weight: 500;
       color:rgba(52, 55, 68, 1);
-      // border-bottom: 1px solid #ddd;
+      
     }
 
     th {
@@ -207,7 +199,7 @@
     }
   }
 
-  // Responsive Design for smaller screens
+  
   @media (max-width: 768px) {
     .portal-card {
       padding: 15px;

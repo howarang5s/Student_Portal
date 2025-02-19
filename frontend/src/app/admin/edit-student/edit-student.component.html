@@ -1,9 +1,11 @@
+<div class="content">
+<div class="form-wrapper">
 <mat-card class="form-card">
     <mat-card-title>Edit Student Data</mat-card-title>
     <form [formGroup]="editStudentForm" (ngSubmit)="onSubmit()">
         <label>Name</label>
         <mat-form-field appearance="outline">
-          <!-- <mat-label>Email</mat-label> -->
+          
           <input matInput formControlName="name" placeholder="Enter teacher name" />
           <mat-error *ngIf="editStudentForm.controls['name'].invalid && editStudentForm.controls['name'].touched">
               Name is required and must be between 4 and 12 characters.
@@ -12,7 +14,7 @@
   
         <label>Email</label> 
         <mat-form-field appearance="outline">
-          <!-- <mat-label>Email</mat-label> -->
+          
           <input matInput formControlName="email" placeholder="Enter teacher email" />
           <mat-error *ngIf="editStudentForm.controls['email'].invalid && editStudentForm.controls['email'].touched">
             Email is required and must have @ symbol.
@@ -21,7 +23,7 @@
   
         <label>Course</label> 
         <mat-form-field appearance="outline">
-          <!-- <mat-label>Subject</mat-label> -->
+          
           <mat-select formControlName="subject" placeholder="Select subject">
             <mat-option *ngFor="let subj of courses" [value]="subj">{{ subj }}</mat-option>
           </mat-select>
@@ -33,3 +35,5 @@
       </div>
     </form>
   </mat-card>
+</div>
+</div>

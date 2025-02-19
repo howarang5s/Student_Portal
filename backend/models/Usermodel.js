@@ -8,21 +8,19 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['teacher', 'student','admin'], default: 'teacher' }, // Role can be 'teacher' or 'student'
   subject: { type: String, required: true }, 
-  isVerifiedEmail: {type:Boolean,defaultValue: false,},
+  otpExpiry: { type: Date, default: null },
   emailToken: {type: String,},
   
 },{ timestamps: true });
 
 
 userSchema.pre('save', async function (next) {
-  console.log('Lets save it before check for pass');
   if (!this.isModified('password')) {
-    console.log('Lets save it');
+
     return next();
   }
   
   this.password = await bcrypt.hash(this.password, 10);
-  console.log('Saved it');
   next();
 });
 

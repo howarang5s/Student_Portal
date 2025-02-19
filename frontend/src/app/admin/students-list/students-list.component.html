@@ -1,0 +1,78 @@
+<div class="content">
+    <div class="student-header">
+        <h2 class="table-heading">Student Records ({{ totalStudents }})</h2>
+        <div class="buttons-container">
+            <button matSuffix mat-raised-button type="button" class="add-button" (click)="refresh()">
+                <mat-icon>refresh</mat-icon> 
+            </button>
+            <button matSiffix mat-raised-button class="add-button" routerLink="/admin/add-student">
+                <mat-icon>add</mat-icon> Add Student
+            </button>
+        </div>
+    </div>        
+
+    <div class="table-container">  
+        <table mat-table [dataSource]="students" class="mat-elevation-z8" matSort>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let student_data">{{ student_data.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                <td mat-cell *matCellDef="let student_data">{{ student_data.email }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="subject">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Course</th>
+                <td mat-cell *matCellDef="let student_data">{{ student_data.subject }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="teacher">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Teacher</th>
+                <td mat-cell *matCellDef="let student">{{ student.teacherName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+                <td mat-cell *matCellDef="let student_data" class="date-cell" >
+                  {{ student_data.createdAt | date: 'MMM d, y' }}
+                </td>
+            </ng-container>  
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let student">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="editStudent(student)">
+                            <mat-icon>edit</mat-icon> Edit
+                        </button>
+                        <button mat-menu-item (click)="deleteStudent(student)">
+                            <mat-icon>delete</mat-icon> Delete
+                        </button>
+                    </mat-menu>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayColumnsforstudents"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayColumnsforstudents;"></tr>
+        </table>
+    </div>
+
+    
+    <mat-paginator
+  [length]="totalStudents"  
+  [pageSize]="recordsPerPage"
+  [pageIndex]="currentPage - 1"
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons>
+    </mat-paginator>
+
+
+
+
+</div>

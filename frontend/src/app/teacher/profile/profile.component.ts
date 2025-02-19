@@ -1,7 +1,8 @@
-// teacher-profile.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TeacherProfileService } from '../profile.service';  // Import the ProfileService
+import { TeacherProfileService } from '../profile.service';  
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 
 @Component({
   selector: 'app-teacher-profile',
@@ -13,7 +14,7 @@ export class TeacherProfileComponent implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private profileService: TeacherProfileService, private router: Router) {}
+  constructor(private profileService: TeacherProfileService, private router: Router,private snackbar: SnackbarService) {}
 
   ngOnInit() {
     this.fetchTeacherProfile();
@@ -28,19 +29,16 @@ export class TeacherProfileComponent implements OnInit {
       (error) => {
         this.isLoading = false;  
         this.errorMessage = 'Failed to load teacher profile. Please try again later.';
-        console.error('Error fetching teacher profile:', error);  // Log the error
+        this.snackbar.showServiceFailureMessage('Error fetching teacher profile:', error);
       }
     );
   }
-
-  // editTeacher(teacherData: any) {
-  //   this.router.navigate(['/edit-teacher',teacherData._id ]); // Navigate to the edit page
-  // }
 
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('role');
-    this.router.navigate(['/login']);
+    localStorage.removeItem('loggedInUser');    
+    this.router.navigate(['auth/login']);
   }
 }

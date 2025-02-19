@@ -1,0 +1,62 @@
+<div class="content">
+<div class="teacher-header">
+    <h2 class="table-heading">Teacher Records ({{ totalTeachers }})</h2>
+    <div class="buttons-container">
+      <button matSuffix mat-raised-button type="button" class="add-button" (click)="refresh()">
+          <mat-icon>refresh</mat-icon> 
+      </button>
+      <button matSiffix mat-raised-button class="add-button" routerLink="/admin/add-teacher">
+          <mat-icon>add</mat-icon> Add Student
+      </button>
+  </div>
+  </div>
+  <div class="table-container">  
+  <table mat-table [dataSource]="teachers" class="mat-elevation-z8" matSort>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let teacher">{{ teacher.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+      <td mat-cell *matCellDef="let teacher">{{ teacher.email }}</td>
+    </ng-container>
+    <ng-container matColumnDef="subject">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Course</th>
+      <td mat-cell *matCellDef="let teacher">{{ teacher.subject }}</td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+      <td mat-cell *matCellDef="let teacher" class="date-cell" >
+        {{ teacher.createdAt | date: 'MMM d, y' }}
+      </td>
+  </ng-container>  
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let teacher">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="editTeacher(teacher)">
+                  <mat-icon>edit</mat-icon> Edit
+              </button>
+              <button mat-menu-item (click)="deleteTeacher(teacher)">
+                  <mat-icon>delete</mat-icon> Delete
+              </button>
+          </mat-menu>
+      </td>
+  </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['name', 'email', 'subject','date', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'email', 'subject','date', 'actions'];"></tr>
+  </table>
+  </div>
+  
+  <mat-paginator
+  [length]="totalTeachers"                
+  [pageSize]="recordsPerPage"             
+  [pageIndex]="currentPage - 1"           
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons>          
+    </mat-paginator>
+
+</div>  

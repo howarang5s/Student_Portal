@@ -5,7 +5,7 @@ const { SERVER_ERROR,RESPONSE_ERROR } = require('../utils/constant');
 const authenticate = (req, res, next) => {
   try {
     // Check if Authorization header is present
-    console.log('Authontication');
+    
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -29,8 +29,6 @@ const authenticate = (req, res, next) => {
     // Attach user data to the request object
     req.userId = decoded.userId; // Extract user ID from token
     req.userRole = decoded.role; // Extract user role from token
-    console.log(req.userId);
-    console.log(req.userRole);
     // Pass control to the next middleware/route handler
     next();
   } catch (error) {

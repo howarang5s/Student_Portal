@@ -1,4 +1,9 @@
-<h2 mat-dialog-title>OTP Verification</h2>
+<div class="otp-header">
+  <h2 mat-dialog-title>OTP Verification</h2>
+  <button color="primary" (click)="close()" >
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="close"></mat-icon>
+  </button>
+</div>
 <div mat-dialog-content>
   <p>{{ message }}</p>
 
@@ -13,6 +18,11 @@
 <div mat-dialog-actions align="end">
   <button mat-button color="primary" (click)="verifyOTP()" [disabled]="isButtonDisabled">
     Verify OTP
+  </button>
+
+  <button mat-button color="primary" (click)="resend()" 
+      *ngIf="countdown === 0" [disabled]="isResending">
+    {{ isResending ? 'Resending...' : 'Resend OTP' }}
   </button>
   
   <button mat-button (click)="closeDialog()" *ngIf="showOkButton">OK</button>
