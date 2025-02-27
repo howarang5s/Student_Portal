@@ -5,15 +5,16 @@ import { SharedModule } from '../shared/shared.module';
 
 
 import { ProfileComponent } from './profile/profile.component';
-import { AddStudentByTeacherComponent } from './add-student/add-student.component';
-import { EditStudentByTeacherComponent } from './edit-student/edit-student.component';
-import { PortalComponent } from './portal/portal.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { StudentsLayoutComponent } from './students-layout/students-layout.component';
+
 @NgModule({
   declarations: [
     ProfileComponent,
-    AddStudentByTeacherComponent,
-    EditStudentByTeacherComponent,
-    PortalComponent
+    SidebarComponent,
+    NavbarComponent,
+    StudentsLayoutComponent 
   ],
   imports: [
     CommonModule,
@@ -21,9 +22,6 @@ import { PortalComponent } from './portal/portal.component';
     SharedModule 
   ],
   exports: [
-    AddStudentByTeacherComponent,
-    EditStudentByTeacherComponent,
-    PortalComponent
   ]
 })
 export class StudentsModule {}

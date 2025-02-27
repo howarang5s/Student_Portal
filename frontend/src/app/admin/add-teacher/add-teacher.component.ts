@@ -17,7 +17,7 @@ export class AddTeacherComponent {
   addTeacherForm: FormGroup;
   students = new MatTableDataSource<any>([]);
   user = new MatTableDataSource<any>([]);
-  courses: string[] = ['Math', 'Science', 'English', 'History']; 
+  courses: string[] = []; 
   users: string[] = [];
   selectedUser: string = '';
   hidePassword: boolean = true; 
@@ -27,24 +27,32 @@ export class AddTeacherComponent {
       name: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8) ]],
-      subject: ['', Validators.required],
+      subjects: [[], Validators.required],
     });
   }
 
   ngOnInit() {
-    }
+    this.adminService.getCoursestoadd().subscribe(
+      (response)=>{
+          this.courses=response;
+          
+      },
+      (error)=> {
+        console.log(error);
+      }
+    )
+  }
 
   onSubmit() {
 
     if (this.addTeacherForm.valid) {
       const teacherData = this.addTeacherForm.value;
       
-
+      
       
       this.adminService.addTeacher(teacherData).subscribe(
         (response) => {
           
-          this.snackbar.showSuccessMessage('Teacher Added Successfully');
           this.router.navigate(['/admin/teachers']); 
         },
         (error) => {
@@ -58,7 +66,6 @@ export class AddTeacherComponent {
   }
   change(event: any){
     if(event.isUserInput) {
-      console.log(event.source.value);
       let setected:any = event.source.value;
       const email = this.user.data.find(obj=>obj.name === setected).email;
       

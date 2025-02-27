@@ -55,17 +55,13 @@ export class StudentsListComponent implements OnInit {
   loadStudents(currentPage: number, recordsPerPage: number, sortField: string, sortOrder: string) {
     this.adminService.getStudents(currentPage, recordsPerPage, sortField, sortOrder).subscribe(
       (data: any) => {
-        console.log('API Response:', data);
+        
   
         this.currentPage = data.currentPage;
         this.totalStudents = data.totalStudents; 
         this.totalPages = data.totalPages;
   
-        if (!this.students) {
-          this.students = new MatTableDataSource(data.students); 
-        } else {
-          this.students = data.students; 
-        }
+        this.students = data.enrichedStudents;
   
         this.students.paginator = this.paginator;
         this.students.sort = this.sorter;
@@ -78,8 +74,13 @@ export class StudentsListComponent implements OnInit {
     );
   }
   
-  refresh(){
-    window.location.reload();
+  refresh() {
+    this.currentPage = 1;
+    this.recordsPerPage = 10;
+    let sortOrder = this.sorter.direction === 'desc' ? -1 : 1; // Convert to 1 or -1
+    this.sortOrder = sortOrder.toString();
+    this.sortField = 'name';
+    this.loadStudents(this.currentPage, this.recordsPerPage, this.sortField, this.sortOrder);
   }
   
   
@@ -93,17 +94,6 @@ export class StudentsListComponent implements OnInit {
       next: (response) => {
 
         this.loadStudents(this.currentPage, this.recordsPerPage, this.sortField, this.sortOrder);
-  
-        // // Remove student from current list
-        // this.students.data = this.students.data.filter((s) => s.localId !== student.localId);
-  
-        // // Ensure Angular Material updates the table
-        // this.students._updateChangeSubscription();
-  
-        // // Only decrement total count if more records exist
-        // if (this.totalStudents > 0) {
-        //   this.totalStudents--;
-        // }
   
         this.snackbar.showSuccessMessage('Student deleted successfully!');
 

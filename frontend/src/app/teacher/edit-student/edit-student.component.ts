@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudentService } from '../student.service';  
-import { AuthService } from '../auth.service'; 
+import { TeacherService } from '../teacher.service';  
+import { AuthService } from 'src/app/auth/auth-service.service'; 
 import { SnackbarService } from 'src/app/shared/snackbar.service';
+import { AdminService } from 'src/app/admin/admin.service';
 
 @Component({
   selector: 'app-edit-student',
@@ -13,16 +14,18 @@ import { SnackbarService } from 'src/app/shared/snackbar.service';
 export class EditStudentByTeacherComponent implements OnInit {
   editStudentForm: FormGroup;
   studentId: string = '';
-  subjects: string[] = ['Math', 'Science', 'English', 'History']; 
+  selectedSubject: string = '';
+  subjects: string[] = ['Math', 'Science', 'English', 'History','Physics','Chemistry','Computer','Biology']; 
   grades: string[] = ['A+', 'A-', 'B+', 'B-', 'F']; 
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private studentService: StudentService, 
+    private teacherService: TeacherService, 
     private authService: AuthService, 
     private router: Router,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
+    private adminService: AdminService
   ) {
     this.editStudentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
@@ -30,32 +33,43 @@ export class EditStudentByTeacherComponent implements OnInit {
       marks: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       subject: ['', Validators.required],
       grade: ['', Validators.required],
-      profile: ['', Validators.required],
+      comments: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
     
     this.studentId = this.route.snapshot.paramMap.get('id') || '';
+    this.selectedSubject = this.route.snapshot.queryParamMap.get('subject') || '';
     this.populateForm();
+    
   }
-
+  
   populateForm() {
-    if (this.studentId) {
-      
-      this.studentService.getStudentById(this.studentId).subscribe(
+    if (this.studentId && this.selectedSubject) {
+      this.teacherService.getStudentById(this.studentId, this.selectedSubject).subscribe(
         (studentData) => {
-          
-          this.editStudentForm.patchValue(studentData);
-        },
-        (error) => {
-          this.snackbar.showServiceFailureMessage('Error fetching student data:', error);
-        }
-      );
-    }
-  }
-
+          console.log(studentData);
+  
+              this.editStudentForm.patchValue({
+                name: studentData.name,
+                email: studentData.email,
+                marks: studentData.marks,
+                subject: studentData.subject,
+                comments: studentData.comments
+              });
+            }
+          ),
+          (error:any) => {
+            this.snackbar.showServiceFailureMessage('Error fetching student data:', error);
+          }
+        };
+        console.log(this.editStudentForm);
+      }
+      
+  
   onSubmit() {
+    console.log(this.editStudentForm.valid);
     if (this.editStudentForm.valid) {
       
       
@@ -68,16 +82,19 @@ export class EditStudentByTeacherComponent implements OnInit {
 
     
       const updatedStudentData = this.editStudentForm.value;
-
+      console.log(updatedStudentData);
       
-      this.studentService.updateStudent(this.studentId, updatedStudentData).subscribe(
+      this.teacherService.updateStudent(this.studentId, updatedStudentData,this.selectedSubject).subscribe(
         (response) => {
           
-          this.snackbar.showSuccessMessage('Student Updated Successfully');
-          this.router.navigate(['student/portal']);
+          
+          this.router.navigate(['/teacher/students_listing'],{
+            queryParams: { subject: this.selectedSubject }
+          }); 
         },
         (error) => {
-          this.snackbar.showServiceFailureMessage('Failed to update student. Please try again later.',error);
+          console.error('Error fetching students:', error);
+        this.snackbar.showServiceFailureMessage('Failed to load students.', error);
         }
       );
     } else {
@@ -87,7 +104,7 @@ export class EditStudentByTeacherComponent implements OnInit {
   }
   onKey(event:any){
     
-    console.log(event.target.value);
+    
     let input:any = event.target.value;
     let grade = '';
     if (input > 0 && input <= 100){
@@ -115,6 +132,8 @@ export class EditStudentByTeacherComponent implements OnInit {
   onCancel() {
     
     this.snackbar.showErrorMessage('Edit canceled.');
-    this.router.navigate(['student/portal']);
+    this.router.navigate(['/teacher/students_listing'],{
+      queryParams: { subject: this.selectedSubject }
+    }); 
   }
 }

@@ -1,10 +1,11 @@
+<div class="content">
 <div class="teacher-profile-container">
     <div class="profile-header">
-      <h2 routerLink="/student/portal">Teacher Profile</h2>
-      <div class="buttons-container" >
+      <h2 routerLink="/teacher/portal">Teacher Profile</h2>
+      <!-- <div class="buttons-container" >
         <button class="logout-button" (click)="logout()">Logout</button>
         
-      </div>
+      </div> -->
     </div>
   
     
@@ -25,7 +26,9 @@
       <div class="profile-body">
         <p><strong>Email:</strong> {{ teacherData.email }}</p>
         <p><strong>Role:</strong> {{ teacherData.role }}</p>
+        <p><strong>Course:</strong> {{ teacherData.subjects }}</p>
       </div>
     </div>
   </div>
+</div>  
   

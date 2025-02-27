@@ -16,6 +16,9 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { StudentsListComponent } from './students-list/students-list.component';
 import { TeachersListComponent } from './teachers-list/teachers-list.component';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { CourseListComponent } from './course-list/course-list.component';
+import { AddCourseComponent } from './add-course/add-course.component';
+import { EditCourseComponent } from './edit-course/edit-course.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,10 @@ import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
     NavbarComponent,
     StudentsListComponent,
     TeachersListComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    CourseListComponent,
+    AddCourseComponent,
+    EditCourseComponent
   ],
   imports: [
     CommonModule,

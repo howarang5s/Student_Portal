@@ -14,7 +14,7 @@ import { SnackbarService } from 'src/app/shared/snackbar.service';
 export class EditTeacherComponent implements OnInit {
   editTeacherForm: FormGroup;
   teacherId: string = '';
-  courses: string[] = ['Math', 'Science', 'English', 'History']; 
+  courses: string[] = []; 
 
   constructor(
     private fb: FormBuilder,
@@ -28,7 +28,7 @@ export class EditTeacherComponent implements OnInit {
     this.editTeacherForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
-      subject: ['',Validators.required]
+      subjects: [[], Validators.required],
     });
   }
 
@@ -36,6 +36,15 @@ export class EditTeacherComponent implements OnInit {
     
     this.teacherId = this.route.snapshot.paramMap.get('id') || '';
     this.populateForm();
+
+    this.adminService.getCoursestoadd().subscribe(
+      (response)=>{
+          this.courses=response;
+      },
+      (error)=> {
+        this.snackbar.showServiceFailureMessage('Error fetching student data:',error);
+      }
+    )
   }
 
   populateForm() {
@@ -69,7 +78,6 @@ export class EditTeacherComponent implements OnInit {
       
       this.adminService.updateTeacher(this.teacherId, updatedTeacherData).subscribe(
         (response) => {
-          this.snackbar.showSuccessMessage('Teacher Updated Successfully!')
           this.router.navigate(['/admin/teachers']);
         },
         (error) => {

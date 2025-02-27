@@ -1,3 +1,5 @@
+<div class="content">
+<div class="form-wrapper">
 <mat-card class="form-card">
     <mat-card-title>Edit Student Data</mat-card-title>
     <form [formGroup]="editStudentForm" (ngSubmit)="onSubmit()">
@@ -32,15 +34,15 @@
         <input readonly matInput formControlName="subject" placeholder="Enter assigned course" />
       </mat-form-field>
   
-      <label>Grade</label>
+      <!-- <label>Grade</label>
       <mat-form-field appearance="outline">
         <input readonly matInput formControlName="grade" placeholder="Enter grade" />
-      </mat-form-field>
+      </mat-form-field> -->
 
       <label>Remarks</label>
       <mat-form-field appearance="outline">
-        <input matInput formControlName="profile" placeholder="Enter remarks" />
-        <mat-error *ngIf="editStudentForm.controls['profile'].invalid && editStudentForm.controls['profile'].touched">
+        <input matInput formControlName="comments" placeholder="Enter remarks" />
+        <mat-error *ngIf="editStudentForm.controls['comments'].invalid && editStudentForm.controls['comments'].touched">
           Profile is required.
         </mat-error>
       </mat-form-field>
@@ -51,3 +53,5 @@
       </div>
     </form>
   </mat-card>
+</div>
+</div>  

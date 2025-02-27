@@ -1,0 +1,56 @@
+<div class="content">
+  <div class="form-wrapper">
+    <mat-card class="form-card">
+      <mat-card-title>Add Student Data</mat-card-title>
+      <form [formGroup]="addStudentForm" (ngSubmit)="onSubmit()">
+        
+        <label>Name</label>
+        <mat-form-field appearance="outline">
+          <mat-select formControlName="name" placeholder="Select student">
+            <mat-option *ngFor="let user of users" [value]="user.name" (onSelectionChange)="change($event)">
+              {{ user.name }}
+            </mat-option>
+          </mat-select>  
+          <mat-error *ngIf="addStudentForm.controls['name'].invalid && addStudentForm.controls['name'].touched">
+            Name is required and must be between 4 and 12 characters.
+          </mat-error>
+        </mat-form-field>
+
+        <label>Email</label> 
+        <mat-form-field appearance="outline">
+          <input readonly matInput formControlName="email" placeholder="Enter your registered email" />
+          <mat-error *ngIf="addStudentForm.controls['email'].invalid && addStudentForm.controls['email'].touched">
+            Email is required and must have @ symbol.
+          </mat-error>
+        </mat-form-field>
+
+        <label>Marks</label> 
+        <mat-form-field appearance="outline">
+          <input matInput type="number" formControlName="marks" placeholder="Enter marks" (keyup)="onKey($event)"/>
+          <mat-error *ngIf="addStudentForm.controls['marks'].invalid && addStudentForm.controls['marks'].touched">
+            Marks must be between 0 and 100.
+          </mat-error>
+        </mat-form-field>
+
+        <label>Subject</label> 
+        <mat-form-field appearance="outline">
+          <input readonly matInput formControlName="subjects" placeholder="Assigned Course" />
+        </mat-form-field>
+
+        <label>Remarks</label> 
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="comments" placeholder="Remarks" />
+          <mat-error *ngIf="addStudentForm.controls['comments'].invalid && addStudentForm.controls['comments'].touched">
+            Remarks are required
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="addStudentForm.invalid">Add</button>
+          <button mat-button type="button" (click)="onCancel()">Cancel</button>
+        </div>
+
+      </form>
+    </mat-card>
+  </div>
+</div>

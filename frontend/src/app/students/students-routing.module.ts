@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuardService } from '../auth/auth-guard.service';
 
 // Components
 import { ProfileComponent } from './profile/profile.component';
-import { AddStudentByTeacherComponent } from './add-student/add-student.component';
-import { EditStudentByTeacherComponent } from './edit-student/edit-student.component';
-import { PortalComponent } from './portal/portal.component';
+import { StudentsLayoutComponent } from './students-layout/students-layout.component';
+
 
 const routes: Routes = [
-  
-  { path: 'profile', component: ProfileComponent },
-  { path: 'add-student', component: AddStudentByTeacherComponent },  
-  { path: 'edit-student/:id', component: EditStudentByTeacherComponent},
-  { path: 'portal',component:PortalComponent}
+  {
+      path: '',
+      component: StudentsLayoutComponent, // Parent layout with sidebar and navbar
+      children: [
+        { path: 'dashboard', component: ProfileComponent,canActivate:[AuthGuardService] },
+        { path: '', redirectTo: 'dashboard', pathMatch: 'full' } 
+      ]
+    }
 ];
 
 @NgModule({

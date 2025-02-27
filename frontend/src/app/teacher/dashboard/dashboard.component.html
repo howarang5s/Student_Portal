@@ -1,0 +1,56 @@
+
+<div class="content">
+    <div class="dashboard-container">
+      
+      <!-- <h2 class="dashboard-title">Admin Dashboard</h2> -->
+    
+      <div class="card-container">
+        <!-- Total Students -->
+        <mat-card class="info-card total-students" matRipple>
+          <mat-card-title>Total Passed Students</mat-card-title>
+          <mat-card-content>
+            <p> {{ totalPassedStudents }}</p>
+          </mat-card-content>
+        </mat-card>
+    
+        <!-- Total Teachers -->
+        <mat-card class="info-card total-teachers" matRipple>
+          <mat-card-title>Total Failed Students</mat-card-title>
+          <mat-card-content>
+            <p> {{ totalFailedStudents }}</p>
+          </mat-card-content>
+        </mat-card>
+    
+        <!-- Best Student -->
+        <!-- Best Student -->
+        <mat-card class="info-card best-student-card" matRipple>
+          <mat-card-title>Best Student</mat-card-title>
+          <mat-card-content *ngIf="bestStudent ">
+            <p><strong>Name:</strong> {{ bestStudent.name }}</p>
+            <p><strong>Subject:</strong> {{ bestStudent.subjects }}</p>
+            <p><strong>Marks:</strong> {{ bestStudent.marks }}/100</p>
+          </mat-card-content>
+          <mat-card-content *ngIf="!bestStudent || bestStudent.subjects?.length === 0">
+            <p>No Data Available</p>
+          </mat-card-content>
+        </mat-card>
+    
+        <!-- Best Teacher -->
+        <mat-card class="info-card best-teacher-card" matRipple>
+          <mat-card-title>Lowest Student</mat-card-title>
+          <mat-card-content *ngIf="lowestStudent">
+            <p><strong>Name:</strong> {{ lowestStudent.name }}</p>
+            <p><strong>Subject:</strong> {{ lowestStudent.subjects }}</p>
+            <p><strong>Marks:</strong> {{ lowestStudent.marks }}/100</p>
+          </mat-card-content>
+          <mat-card-content *ngIf="!lowestStudent">
+            <p>No Data Available</p>
+          </mat-card-content>
+        </mat-card>
+    
+      </div>
+    
+    </div>
+    </div>
+    
+    

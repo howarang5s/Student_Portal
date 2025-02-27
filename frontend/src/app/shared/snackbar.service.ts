@@ -20,9 +20,9 @@ export class SnackbarService {
  
   public showSnackBar(context: string, message: string) {
     this.snackBar.open(message, '', {
-      duration: 2000,
+      duration: 1000,
       panelClass: [context || SNACK_BAR_MESSAGE_TYPE.default],
-      verticalPosition: 'top',
+      verticalPosition: 'bottom',
       horizontalPosition: 'center'
     });
   }

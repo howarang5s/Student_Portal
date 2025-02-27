@@ -17,7 +17,7 @@ export class AddStudentComponent {
   addStudentForm: FormGroup;
     students = new MatTableDataSource<any>([]);
     user = new MatTableDataSource<any>([]);
-    courses: string[] = ['Math', 'Science', 'English', 'History']; 
+    courses: string[] = []; 
     users: string[] = [];
     selectedUser: string = '';
     hidePassword: boolean = true; 
@@ -27,11 +27,21 @@ export class AddStudentComponent {
         name: ['', [Validators.required, Validators.minLength(4)]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8) ]],
-        subject: ['', Validators.required],
+        subjects: [[], Validators.required],
       });
     }
   
-    ngOnInit():void {}
+    ngOnInit():void {
+      this.adminService.getCoursestoadd().subscribe(
+        (response)=>{
+            this.courses=response;
+            
+        },
+        (error)=> {
+          console.log(error);
+        }
+      )
+    }
   
     onSubmit() {
   
@@ -42,7 +52,6 @@ export class AddStudentComponent {
         this.adminService.addStudent(teacherData).subscribe(
           (response) => {
             
-            this.snackbar.showSuccessMessage('Student Added Successfully')
             this.router.navigate(['admin/students']); 
           },
           (error) => {

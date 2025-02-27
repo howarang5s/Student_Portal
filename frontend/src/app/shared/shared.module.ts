@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
@@ -47,6 +48,7 @@ import { passwordMatchValidator } from './validaors/validator.component';
         MatToolbarModule,
         MatButtonModule,
         MatOptionModule,
+        MatTooltipModule,
         
     
   ],
@@ -64,7 +66,7 @@ import { passwordMatchValidator } from './validaors/validator.component';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    
+    MatTooltipModule,
     MatOptionModule,
     HttpClientModule,
     MatRadioModule, 

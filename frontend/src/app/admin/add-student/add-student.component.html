@@ -6,7 +6,7 @@
       <label>Name</label>
       <mat-form-field appearance="outline">
         
-        <input matInput formControlName="name" placeholder="Enter teacher name" />
+        <input matInput formControlName="name" placeholder="Enter student name" />
         <mat-error *ngIf="addStudentForm.controls['name'].invalid && addStudentForm.controls['name'].touched">
             Name is required and must be between 4 and 12 characters.
         </mat-error>
@@ -15,7 +15,7 @@
       <label>Email</label> 
       <mat-form-field appearance="outline">
         
-        <input matInput formControlName="email" placeholder="Enter teacher email" />
+        <input matInput formControlName="email" placeholder="Enter student email" />
         <mat-error *ngIf="addStudentForm.controls['email'].invalid && addStudentForm.controls['email'].touched">
           Email is required and must have @ symbol.
         </mat-error>
@@ -33,14 +33,15 @@
         </mat-error>
       </mat-form-field>
 
-      <label>Subject</label> 
+      <label>Courses</label> 
       <mat-form-field appearance="outline">
-        
-        <mat-select formControlName="subject" placeholder="Select subject" multiple>
-          <mat-option *ngFor="let subj of courses" [value]="subj">{{ subj }}</mat-option>
+        <mat-select formControlName="subjects" multiple>
+          <mat-option *ngFor="let subj of courses" [value]="subj">
+            {{ subj }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
-  
+      
       <div class="form-actions">
         <button mat-raised-button color="primary" type="submit" [disabled]="addStudentForm.invalid">Add</button>
         <button mat-button type="button" (click)="onCancel()">Cancel</button>

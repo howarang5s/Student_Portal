@@ -2,10 +2,10 @@
 <div class="content">
 <div class="dashboard-container">
   
-  <!-- <h2 class="dashboard-title">Admin Dashboard</h2> -->
+  
 
   <div class="card-container">
-    <!-- Total Students -->
+    
     <mat-card class="info-card total-students" matRipple>
       <mat-card-title>Total Students</mat-card-title>
       <mat-card-content>
@@ -13,7 +13,7 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Total Teachers -->
+    
     <mat-card class="info-card total-teachers" matRipple>
       <mat-card-title>Total Teachers</mat-card-title>
       <mat-card-content>
@@ -21,31 +21,31 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Best Student -->
+    
     <mat-card class="info-card best-student-card" matRipple>
       <mat-card-title>Best Student</mat-card-title>
-      <mat-card-content *ngIf="bestStudent">
+      <mat-card-content *ngIf="bestStudent && bestStudent.subjects?.length > 0">
         <p><strong>Name:</strong> {{ bestStudent.name }}</p>
+        <p><strong>Subject:</strong> {{ bestStudent.subjects }}</p>
         <p><strong>Marks:</strong> {{ bestStudent.marks }}/100</p>
-        <p><strong>Subject:</strong> {{ bestStudent.subject }}</p>
-        
       </mat-card-content>
-      <mat-card-content *ngIf="!bestStudent">
+      <mat-card-content *ngIf="!bestStudent || bestStudent.subjects?.length === 0">
         <p>No Data Available</p>
       </mat-card-content>
     </mat-card>
 
-    <!-- Best Teacher -->
+    
     <mat-card class="info-card best-teacher-card" matRipple>
-      <mat-card-title>Top Teacher</mat-card-title>
+      <mat-card-title>Best Teacher</mat-card-title>
       <mat-card-content *ngIf="bestTeacher">
         <p><strong>Name:</strong> {{ bestTeacher.name }}</p>
-        <p><strong>Course:</strong> {{ bestTeacher.subject }}</p>
+        <p><strong>Course:</strong> {{ bestTeacher.subjects }}</p>
       </mat-card-content>
       <mat-card-content *ngIf="!bestTeacher">
         <p>No Data Available</p>
       </mat-card-content>
     </mat-card>
+
   </div>
 
 </div>

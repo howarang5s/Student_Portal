@@ -46,11 +46,10 @@ export class VerifyComponent implements OnInit {
 
     this.authService.verifyOtp(this.email, this.otpForm.value.otp).subscribe({
       next: (response) => {
-        console.log('response');
+        
         this.isLoading = false;
         this.isVerified = true;
         this.message = "OTP verified successfully! Redirecting to login...";
-        this.snackbar.showSuccessMessage(this.message);
         
         setTimeout(() => {
           this.router.navigate(['auth/login']);

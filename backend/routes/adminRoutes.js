@@ -1,5 +1,5 @@
 const express = require('express');
-const { addTeacher,updateAnyTeacherProfile,getAllTeachers,deleteTeacher, getAllStudents, getTeacherbyId, getAdminProfile, updateAdminProfile,addStudent,deleteStudent,updateAnyStudentProfile, getStudentbyId, getAllStudentsByadmin } = require('../controllers/adminController');
+const { addTeacher,updateAnyTeacherProfile,getAllTeachers,deleteTeacher, getAllStudents, getTeacherbyId, getAdminProfile, updateAdminProfile,addStudent,deleteStudent,updateAnyStudentProfile, getStudentbyId, getAllStudentsByadmin, addCourse, editCourse, deleteCourse, getAllCourse, getCourseByCourseId,getCourses } = require('../controllers/adminController');
 const { authenticate } = require('../middleware/authmiddleware'); // Make sure path is correct
 const router = express.Router();
 
@@ -16,5 +16,11 @@ router.put('/update/profile/:adminId', authenticate, updateAdminProfile);
 router.post('/addStudent', authenticate, addStudent);
 router.put('/updateStudent/:studentId', authenticate, updateAnyStudentProfile);
 router.delete('/deleteStudent/:studentId', authenticate, deleteStudent);
+router.post('/addCourse',authenticate,addCourse);
+router.put('/editCourse/:courseId',authenticate,editCourse);
+router.delete('/deleteCourse/:courseId',authenticate,deleteCourse);
+router.get('/getCourses',authenticate,getAllCourse);
+router.get('/getCourseByCourseId/:courseId',authenticate,getCourseByCourseId);
+router.get('/courses',authenticate,getCourses);
 
 module.exports = router;

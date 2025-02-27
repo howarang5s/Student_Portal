@@ -5,54 +5,46 @@ const {SERVER_ERROR, RESPONSE_ERROR} = require('../utils/constant')
 
 
 const addStudent = async (req, res) => {
-  
-  if (req.userRole !== 'teacher') {
-    return res.status(403).json({ message: SERVER_ERROR.permission_denied });
+  if (req.userRole !== "teacher") {
+    return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
   }
 
-  const { name, email, grade, profile, subject, marks } = req.body;
-  
+  const { email, comments, subjects, marks } = req.body;
 
   try {
-    const nameRegex = /^[A-Za-z\s]{2,50}$/;
-    if (!nameRegex.test(name)) {
-      return res.status(400).json({ message: SERVER_ERROR.name_format_error });
-    }
-
-    const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: SERVER_ERROR.email_verification_error });
-    }
-
-    const existingUser = await User.findOne({ email });
     
-
-    
-    if (!existingUser) {
-      return res.status(400).json({ message: SERVER_ERROR.existing_user });
+    let user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(404).json({ message: "Student not found in User table" });
     }
+    
 
     
     const studentData = {
-      userId: existingUser._id, 
-      name,
-      email,
-      subject,
-      marks,
-      grade,
-      profile,
-      addedBy: req.userId, 
+      studentId: user._id, 
+      subjects: subjects,
+      marks: marks,
+      comments,
+      createdBy: req.userId,
     };
+
     const newStudent = new Student(studentData);
     
     await newStudent.save();
 
-    
-    res.status(201).json({ message: RESPONSE_ERROR.STUDENTS_ADDED, student: newStudent });
+    return res.status(201).json({ message: "Student added successfully", student: newStudent });
   } catch (error) {
+    console.error("Error adding/updating student:", error);
+    
+    
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Duplicate entry: This student has already been added." });
+    }
+
     res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
   }
 };
+
 
 const getProfile = async (req,res) => {
   try{
@@ -88,78 +80,221 @@ const getStudentProfile = async (req,res) => {
   }
 }
   
-const getStudentbyId = async (req,res) => {
-  const { studentId } = req.params; 
-  try{
-    
-    const student = await Student.findById(studentId);
+const getStudentbyId = async (req, res) => {
+  const { studentId } = req.params;
+  const { subject } = req.query;
 
-    if (!student) {
-      return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
-    }
-
-    if (student.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ message: SERVER_ERROR.STUDENTS_ASSOCIATED });
-    }
-    return res.status(200).json(student)
-  }catch{
-    res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
-  }
-}
-
-const getAllStudents = async (req, res) => {
   try {
-    if (req.userRole === 'teacher') {
-      const students = await Student.find({ addedBy: req.userId }); 
-      
-      if (students.length === 0) {
-        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_NOT_EXIST });
-      }
-
-      return res.status(200).json(students); 
-    }
-
-    const student = await Student.findOne({ userId: req.userId });
-
+    
+    const student = await Student.findOne({ _id: studentId, subjects: subject });
+    
     if (!student) {
       return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
     }
+    
+    
+    const studentUser = await User.findById(student.studentId).select('name email');
+    
+    if (!studentUser) {
+      return res.status(404).json({ message: 'Student not found in User table' });
+    }
 
-    res.status(200).json(student); 
+
+
+    
+    const studentResponse = {
+      name: studentUser.name,
+      email: studentUser.email,
+      marks: student.marks,
+      subject: student.subjects,
+      comments: student.comments,
+    };
+
+    return res.status(200).json(studentResponse);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
   }
 };
 
 
+const getAllStudents = async (req, res) => {
+  try {
+    if (req.userRole === 'teacher') {
+      const { subject } = req.query;
+      let { page, limit, sortField, sortOrder } = req.query;
+      
+      page = parseInt(req.query.page) || 1; 
+      limit = parseInt(req.query.limit) || 10; 
+      skip = (page - 1) * limit; 
+      sortOrder = sortOrder === 'desc' ? -1 : 1;
+
+      
+      const totalStudents = await Student.countDocuments({ createdBy: req.userId, subjects: subject });
+
+      const sortCriteria = {};
+      if (sortField) {
+          sortCriteria[sortField] = sortOrder;
+      } else {
+          sortCriteria['createdAt'] = -1; 
+      }
+
+      const students = await Student.find({ createdBy: req.userId, subjects: subject })
+        .sort(sortCriteria)  
+        .skip(skip) 
+        .limit(limit) 
+        .exec();
+
+      if (!students.length) {
+        return res.status(404).json({ message: SERVER_ERROR.STUDENTS_NOT_EXIST });
+      }
+
+      
+      const studentDetails = await Promise.all(
+        students.map(async (student) => {
+          const userDetails = await User.findOne({ _id: student.studentId }).select("name email");
+          let grade = '';
+          if(student.marks > 0 && student.marks <= 33){
+            grade = 'F';
+          }else if(student.marks > 33 && student.marks <= 60){
+            grade = 'B-';
+          }else if(student.marks > 60 && student.marks <= 79){
+            grade = 'B+';
+          }else if(student.marks > 79 && student.marks <= 89){
+            grade = 'A-';
+          }else if(student.marks > 89 && student.marks <= 100){
+            grade = 'A+';
+          } 
+          return {
+            ...student.toObject(), 
+            name: userDetails?.name || "Unknown",
+            email: userDetails?.email || "Unknown",
+            grade
+          };
+        })
+      );
+
+      return res.status(200).json({
+        students: studentDetails,
+        currentPage: page,
+        totalPages: Math.ceil(totalStudents / limit),
+        totalStudents,
+      });
+    } else {
+      return res.status(403).json({ message: SERVER_ERROR.PERMISSION_DENIED });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+  }
+};
+
+
+const getTeacherStudentsStats = async (req, res) => {
+  try {
+    
+    const students = await Student.find({ createdBy: req.userId });
+
+    if (!students || students.length === 0) {
+      return res.status(404).json({ message: "No students found for this teacher" });
+    }
+
+    let totalPassedStudents = 0;
+    let totalFailedStudents = 0;
+    let bestStudent = null;
+    let lowestStudent = null;
+    let highestMarks = 50;
+    let lowestMarks = Infinity;
+
+    
+    for (const student of students) {
+      
+      if (student.marks >= 34) {
+        totalPassedStudents++;
+      } else {
+        totalFailedStudents++;
+      }
+
+      
+      if (student.marks > highestMarks) {
+        highestMarks = student.marks;
+        bestStudent = student;
+      }
+
+      
+      if (student.marks < lowestMarks && student.marks < 50) {
+        lowestMarks = student.marks;
+        lowestStudent = student;
+      }
+    }
+
+    
+    if (bestStudent) {
+      const userDetails = await User.findOne({ _id: bestStudent.studentId }).select("name email");
+      if (userDetails) {
+        bestStudent = {
+          ...bestStudent.toObject(),
+          name: userDetails.name,
+          email: userDetails.email,
+        };
+      }
+    }
+
+    if (lowestStudent) {
+      const userDetails = await User.findOne({ _id: lowestStudent.studentId }).select("name email");
+      if (userDetails) {
+        lowestStudent = {
+          ...lowestStudent.toObject(),
+          name: userDetails.name,
+          email: userDetails.email,
+        };
+      }
+    }
+
+    return res.status(200).json({
+      totalPassedStudents,
+      totalFailedStudents,
+      bestStudent,
+      lowestStudent,
+    });
+  } catch (error) {
+    console.error("Error fetching teacher's students stats:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
 const updateAnyStudentProfile = async (req, res) => {
   if (req.userRole !== 'teacher') {
-    return res.status(403).json({ message: SERVER_ERROR.permission_to_update });
+    return res.status(403).json({ message: SERVER_ERROR.PERMISSION_TO_UPDATE });
   }
+  
 
-  const { studentId } = req.params; 
-
+  const { studentId } = req.params;
+  const { subject } = req.query;
+  const { comments, subjects, marks } = req.body; 
+  
   try {
-    const student = await Student.findById(studentId);
+    const student = await Student.findOne({ _id: studentId, subjects: subject });
     
-
     if (!student) {
-      return res.status(404).json({ message: SERVER_ERROR.student_existence });
+      return res.status(404).json({ message: SERVER_ERROR.STUDENT_EXISTENCE });
     }
 
     
-    if (student.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ message: SERVER_ERROR.student_associated });
+    if (student.createdBy.toString() !== req.userId) {
+      return res.status(403).json({ message: SERVER_ERROR.STUDENT_ASSOCIATED });
     }
     
+
+    if (comments) student.comments = comments;
+    if (marks) student.marks = marks;
+
     
-    student.marks = req.body.marks || student.marks;
-    student.profile = req.body.profile || student.profile;
-    student.grade = req.body.grade || student.grade;
 
     await student.save();
-
-    res.status(200).json({ message: SERVER_ERROR.update_student, student });
+    res.status(200).json({ message: SERVER_ERROR.UPDATE_STUDENT, student });
   } catch (error) {
     res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
   }
@@ -170,19 +305,20 @@ const deleteStudent = async (req, res) => {
   if (req.userRole !== 'teacher') {
     return res.status(403).json({ message: SERVER_ERROR.permission_to_delete });
   }
-
+  
   const { studentId } = req.params;
+  const { subject } = req.query
   
 
   try {
-    const student = await Student.findById(studentId);
+    const student = await Student.findOne({ _id: studentId, subjects: subject });
     
     if (!student) {
       return res.status(404).json({ message: SERVER_ERROR.STUDENTS_EXISTENCE });
     }
 
     
-    if (student.addedBy.toString() !== req.userId) {
+    if (student.createdBy.toString() !== req.userId) {
       return res.status(403).json({ message: SERVER_ERROR.STUDENTS_ASSOCIATED });
     }
     await student.deleteOne();
@@ -204,28 +340,35 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const mongoose = require('mongoose'); 
+
 const getfilteredStudents = async (req, res) => {
+  const { subject } = req.params;
+
   try {
     
-    const allStudents = await User.find({ role: 'student' });
+    const addedStudents = await Student.find({ subjects: subject }).select('studentId');
+    
+    
+    const addedStudentIds = addedStudents.map(student => new mongoose.Types.ObjectId(student.studentId));
+    
 
     
-    const assignedStudents = await Student.find({}, 'name');
+    const students = await User.find({
+      role: 'student',
+      subjects: subject,  
+      _id: { $nin: addedStudentIds } 
+    });
 
     
-    const assignedStudentNames = assignedStudents.map(student => student.name);
-
-    
-    const unassignedStudents = allStudents
-      .map(user => user.name)
-      .filter(name => !assignedStudentNames.includes(name));
-
-    res.json({ students: unassignedStudents });
+    res.json({ students });
   } catch (error) {
     console.error('Error fetching students:', error);
-    res.status(500).json({ message: SERVER_ERROR.SERVER_ERR });
+    res.status(500).json({ message: 'Server Error' });
   }
 };
+
+
 
 
 module.exports = {
@@ -237,6 +380,7 @@ module.exports = {
   getStudentProfile,
   getAllUsers,
   getStudentbyId,
-  getfilteredStudents
+  getfilteredStudents,
+  getTeacherStudentsStats
   
 };

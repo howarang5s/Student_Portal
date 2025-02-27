@@ -37,7 +37,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   onSubmit(): void {
     if (this.forgotPasswordForm.invalid) {
-      console.log('Invalid form');
+      
       return;
     }
   

@@ -32,7 +32,13 @@ h2.mat-dialog-title {
   gap: 10px;
   margin-top: 15px;
 }
-
+.close-button{
+  background-color: #e91845;
+  color: white;
+  &:hover {
+    background: #c00735;
+  }
+}
 button {
   background-color: #3b8d99;
   color: white;

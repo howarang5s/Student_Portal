@@ -56,7 +56,6 @@ export class EmailVerificationDialogComponent implements OnInit {
         clearInterval(this.timer);
         this.isVerified = true;
         this.message = "OTP verified successfully!";
-        this.snackbar.showSuccessMessage(this.message);
         this.showOkButton = true;
         this.isButtonDisabled = true; 
       },

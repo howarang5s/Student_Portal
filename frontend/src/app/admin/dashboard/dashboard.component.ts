@@ -31,11 +31,11 @@ export class DashboardComponent implements OnInit {
   
 
   loadStudents() {
-    this.adminService.getCountStudents().subscribe(
+    this.adminService.getDashboardStats().subscribe(
       (data)=>{
-        console.log(data);
-        this.totalStudents = data.studentscount;
-        this.totalTeachers = data.teachercount;
+        
+        this.totalStudents = data.studentsCount;
+        this.totalTeachers = data.teachersCount;
         this.bestStudent = data.topStudent;
         this.bestTeacher = data.topTeacher;
       }

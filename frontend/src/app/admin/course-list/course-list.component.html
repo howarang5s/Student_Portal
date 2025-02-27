@@ -1,0 +1,66 @@
+<div class="content">
+    <div class="student-header">
+        <h2 class="table-heading">Courses ({{ totalCourses }})</h2>
+        <div class="buttons-container">
+            <button matSuffix mat-raised-button type="button" class="add-button" (click)="refresh()">
+                <mat-icon>refresh</mat-icon> 
+            </button>
+            <button matSiffix mat-raised-button class="add-button" routerLink="/admin/add-course">
+                <mat-icon>add</mat-icon> Add Course
+            </button>
+        </div>
+    </div>        
+
+    <div class="table-container">  
+        <table mat-table [dataSource]="courses" class="mat-elevation-z8" matSort>
+
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                <td mat-cell *matCellDef="let course">{{ course.courseId }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let course">{{ course.courseName }}</td>
+            </ng-container>
+              
+
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+                <td mat-cell *matCellDef="let course" class="date-cell" >
+                  {{ course.createdAt | date: 'MMM d, y' }}
+                </td>
+            </ng-container>  
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let course">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="editStudent(course)">
+                            <mat-icon>edit</mat-icon> Edit
+                        </button>
+                        <button mat-menu-item (click)="deleteStudent(course)">
+                            <mat-icon>delete</mat-icon> Delete
+                        </button>
+                    </mat-menu>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayColumnsforstudents"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayColumnsforstudents;"></tr>
+        </table>
+    </div>
+
+    
+    <mat-paginator
+  [length]="totalCourses"  
+  [pageSize]="recordsPerPage"
+  [pageIndex]="currentPage - 1"
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons>
+    </mat-paginator>
+
+</div>

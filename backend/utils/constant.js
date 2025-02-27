@@ -23,7 +23,9 @@ const SERVER_ERROR = {
     TOKEN_MISSING: "Token is missing, authorization denied",
     TOKEN_EXPIRED: "Token is invalid or expired",
     NEW_PASSWORD_ERROR: "User found. Please enter a new password.",
-    AUTHENTICATE: "Failed to authenticate token"
+    AUTHENTICATE: "Failed to authenticate token",
+    OTP_EXPIRED: "OTP has expired.",
+    INAVLID_OTP: "Invalid OTP."
 };
 
 const RESPONSE_ERROR = {
@@ -34,6 +36,8 @@ const RESPONSE_ERROR = {
     UPDATE_STUDENT: "Student profile updated successfully",
     DELETE: "Student deleted successfully",
     TEACHER_UPDATE: "Profile updated successfully",
+    OTP_VERIFY: "OTP verified successfully! You can now reset your password."
+    
 };
 
 

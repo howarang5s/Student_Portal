@@ -1,33 +1,46 @@
-
-<div class="student-profile-container">
+<div class="content">
+  <div class="teacher-profile-container">
     <div class="profile-header">
-      <h2>Student Profile</h2>
-      <button class="logout-button" (click)="logout()">Logout</button>
+      <h2 routerLink="/teacher/portal">Student Profile</h2>
     </div>
-  
-    
+
+    <!-- Loading Indicator -->
     <div *ngIf="isLoading" class="loading">
       Loading...
     </div>
-  
-    
+
+    <!-- Error Message -->
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
-  
-    
+
+    <!-- Student Profile -->
     <div *ngIf="studentData" class="profile-card">
       <div class="profile-header">
         <h3>{{ studentData.name }}</h3>
-        <p class="profile-grade">Grade: {{ studentData.grade }}</p>
       </div>
       <div class="profile-body">
-        <p><strong>Email:</strong> {{ studentData.email }}</p>
-        <p><strong>Subject:</strong> {{ studentData.subject }}</p>
-        <p><strong>Marks:</strong> {{ studentData.marks }}</p>
-        <p><strong>Profile:</strong> {{ studentData.profile }}</p>
-        <p><strong>Teacher:</strong> {{ studentData.addedBy }}</p>
+        <p><strong>Email:</strong> {{ studentData.email }}</p>        
+        <p *ngIf="teacherData"><strong>Teacher:</strong> {{ teacherData.name }}</p>
+        <div *ngIf="studentData.subjects && studentData.subjects.length">
+          <p><strong>Subjects & Marks:</strong></p>
+          <ul>
+            <li *ngFor="let subject of studentData.subjects">
+              <span matTooltip="Added by: {{ subject.teacherName }} ({{ subject.teacherEmail }})">
+                {{ subject.subject }} - Marks: {{ subject.marks }}
+              </span>
+              <br>
+              <strong>Remarks:</strong> {{ subject.comments || 'N/A' }}
+            </li>
+          </ul>
+        </div>
+    
+        <!-- If no subjects exist -->
+        <p *ngIf="!studentData.subjects || studentData.subjects.length === 0">
+          No subjects have been added yet.
+        </p>
       </div>
     </div>
+    
   </div>
-  
+</div>

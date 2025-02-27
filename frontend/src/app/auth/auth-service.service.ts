@@ -2,7 +2,8 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -34,15 +35,32 @@ export class AuthService {
   }
 
   
-  logout(): void {
-    localStorage.removeItem('authToken'); 
+  logout(sessionID: string): Observable<any> {
+    const url = `${this.apiurl}/auth/logout`;
+    return this.http.post<any>(url, { sessionID });
   }
+  
 
   
   isAuthenticated(): boolean {
     return !!this.getToken(); 
   }
 
+  checkActiveSession(userId:string ): Observable<boolean> {
+  
+    const apiUrl = `${this.apiurl}/auth/session/check`;
+    
+  
+    return this.http.post<{ isValid: boolean }>(apiUrl,{userId}).pipe(
+      map((response) => {
+        
+        return response.isValid;
+      }),
+      
+    );
+  }
+  
+  
   
   forgotPassword(email: string, newPassword: string): Observable<any> {
     const url = `${this.apiurl}/auth/forgot-Password`;
@@ -50,16 +68,16 @@ export class AuthService {
   }
 
   login( email: string, password: string): Observable<any> {
-    console.log('URL from environment',this.apiurl)
+    
     const url = `${this.apiurl}/auth/`;
 
     return this.http.post<any>(url, { email, password });
   }
 
   register( name: string, email: string, password: string, role: string ): Observable<any> {
-    console.log('URL from environment',this.apiurl)
+    
     const url = `${this.apiurl}/auth/register`;
-    console.log('URL from environment',url)
+    
     return this.http.post<any>(url, { name, email, password, role });
   }
    
@@ -75,6 +93,12 @@ export class AuthService {
   sendOTP(email:string): Observable<any> {
     return this.http.post<any>('http://localhost:5000/api/auth/sendMailto', { email });
   }
+
+  isLoggedIn(): boolean {
+    const token = localStorage.getItem('token'); 
+    return !!token; 
+  }
+  
   
   
 }

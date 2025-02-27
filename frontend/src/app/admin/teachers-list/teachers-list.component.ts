@@ -52,16 +52,17 @@ export class TeachersListComponent {
   }
 
   
-  loadTeachers(currentPage: any, recordsPerPage: any, sortField:any, sortOrder:any) {
-    this.adminService.getTeacher(currentPage, recordsPerPage,sortField,sortOrder).subscribe(
+  loadTeachers(currentPage: any, recordsPerPage: any, sortField: any, sortOrder: any) {
+    this.adminService.getTeacher(currentPage, recordsPerPage, sortField, sortOrder).subscribe(
       (response: any) => {
         this.currentPage = response.currentPage;
         this.totalTeachers = response.totalTeachers;
         this.totalPages = response.totalPages;
-        this.teachers = response.teachers;
+
+        this.teachers= response.enrichedTeacher
+        
         this.teachers.paginator = this.paginator;
         this.teachers.sort = this.sorter;
-
       },
       (error) => {
         console.error('Error fetching teachers:', error);
@@ -70,8 +71,15 @@ export class TeachersListComponent {
     );
   }
   
+  
   refresh(){
-    window.location.reload();
+    
+    this.currentPage = 1;
+    this.recordsPerPage = 10;
+    let sortOrder = this.sorter.direction === 'desc' ? -1 : 1; // Convert to 1 or -1
+    this.sortOrder = sortOrder.toString();
+    this.sortField = 'name';
+    this.loadTeachers(this.currentPage,this.recordsPerPage,this.sortField,this.sortOrder);
   }  
 
   editTeacher(teacher: any) {
@@ -85,8 +93,6 @@ export class TeachersListComponent {
 
         this.loadTeachers(this.currentPage,this.recordsPerPage,this.sortField,this.sortOrder);
         this.snackbar.showSuccessMessage('Teacher deleted successfully');
-
-        
 
       },
       error: (error) => {

@@ -14,7 +14,7 @@ import { SnackbarService } from 'src/app/shared/snackbar.service';
 export class EditStudentComponent {
   editStudentForm: FormGroup;
     teacherId: string = '';
-    courses: string[] = ['Math', 'Science', 'English', 'History']; 
+    courses: string[] = []; 
   
     constructor(
       private fb: FormBuilder,
@@ -28,7 +28,7 @@ export class EditStudentComponent {
       this.editStudentForm = this.fb.group({
         name: ['', [Validators.required, Validators.minLength(4)]],
         email: ['', [Validators.required, Validators.email]],
-        subject: ['',Validators.required]
+        subjects: [[], Validators.required],
       });
     }
   
@@ -36,6 +36,16 @@ export class EditStudentComponent {
       
       this.teacherId = this.route.snapshot.paramMap.get('id') || '';
       this.populateForm();
+
+      this.adminService.getCoursestoadd().subscribe(
+        (response)=>{
+            this.courses=response;
+            
+        },
+        (error)=> {
+          this.snackbar.showServiceFailureMessage('Error fetching student data:',error);
+        }
+      )
     }
   
     populateForm() {
@@ -43,7 +53,12 @@ export class EditStudentComponent {
         
         this.adminService.getStudentById(this.teacherId).subscribe(
           (teacherData) => {
-            this.editStudentForm.patchValue(teacherData);
+            this.editStudentForm.patchValue({
+              name:teacherData.name,
+              email:teacherData.email,
+              subjects:teacherData.subjects
+            });
+
           },
           (error) => {
             this.snackbar.showServiceFailureMessage('Error fetching student data:',error);
@@ -66,9 +81,8 @@ export class EditStudentComponent {
         const updatedTeacherData = this.editStudentForm.value;
   
         
-        this.adminService.updateTeacher(this.teacherId, updatedTeacherData).subscribe(
+        this.adminService.updateStudent(this.teacherId, updatedTeacherData).subscribe(
           (response) => {
-            this.snackbar.showSuccessMessage('Student Updated Successfully!');
             this.router.navigate(['/admin/students']);
           },
           (error) => {
@@ -82,7 +96,6 @@ export class EditStudentComponent {
   
     onCancel() {
       
-      this.snackbar.showDefaultMessage('Edit canceled.');
       this.router.navigate(['/admin/students']);
     }
 }

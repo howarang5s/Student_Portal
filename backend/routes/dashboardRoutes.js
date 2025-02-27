@@ -1,9 +1,9 @@
 const express = require('express');
-const { getAllStudents} = require('../controllers/dashboardController');
-const { authenticate } = require('../middleware/authmiddleware'); // Make sure path is correct
+const { dashboardStats} = require('../controllers/dashboardController');
+const { authenticate } = require('../middleware/authmiddleware'); 
 const router = express.Router();
 
-router.get('/students',authenticate , getAllStudents);
+router.get('/dashboardStats',authenticate , dashboardStats);
 
 
 module.exports = router;
